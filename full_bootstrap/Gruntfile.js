@@ -81,7 +81,6 @@ module.exports = async function(grunt) {
             if (split[0] !== 'Y' && split[0] !== 'N') return false;
             if (split.length < 3) return false;
             if (split[0] === 'Y' && split.length < 4) return false;
-            console.log('*** The SystemInfo File passed the first test of validity');
             
             const useParent = split[0] === 'Y';
 
@@ -143,12 +142,10 @@ module.exports = async function(grunt) {
               }
           }
 
-          console.log('**** passed the test of creating Parent Directory');
           const result = directoriesCanBeCreated(adminDirectoryPath, projectsDirectoryPath);
 
           if (!parentDirectoryExisted) removeDirectory(parentDirectoryPath);
 
-          console.log(`****in dcbcParentetc about to return ${result}`);
           return result;
 
           function notifyOfInabilityToCreateParentFolder() {
@@ -217,7 +214,6 @@ module.exports = async function(grunt) {
         function notifyOfExistingFolders(
           adp, pdp, adpExists, pdpExists
         ) {
-          console.log(`${adp} - ${pdp} - ${adpExists} - ${pdpExists}`);
           console.log('***********NOTICE**************');
 
           console.log(
@@ -245,13 +241,10 @@ module.exports = async function(grunt) {
         createFolders();
 
         function createFolders() {
-          console.log('***in createFolders');
           createFoldersFromText(fs.readFileSync(systemInfoFilePath, 'utf8'));
 
           function createFoldersFromText(text) {
-            console.log('*** in createFoldersFromText');
             const path = require('path');
-            console.log('***past path require statement');
             const split = text.split('|');
 
             const useParent = split[0] === 'Y';
@@ -260,7 +253,6 @@ module.exports = async function(grunt) {
             let projectsFolderPath = '';
             setFolderPaths();
 
-            console.log(`*** folder paths were set: [${parentFolderPath}] - [${adminFolderPath}] - [${projectsFolderPath}]`);
             if (useParent && !fs.existsSync(parentFolderPath)) fs.mkdirSync(parentFolderPath);
             fs.mkdirSync(projectsFolderPath);
             fs.mkdirSync(adminFolderPath);
