@@ -5,7 +5,11 @@
   "main": "none",
   "scripts": {
     "test": "echo \"This is not that kind of project\" && exit 0",
-    "finishbootstrap": "grunt"
+    "finishbootstrap": "grunt",
+    "managesysteminfo": "grunt managesysteminfo:I",
+    "managesysteminfo_default": "grunt managesysteminfo:default",
+    "managesysteminfo_help": "grunt managesysteminfo:help",
+    "help": "grunt help"
   },
   "author": "Slade Stewart",
   "license": "ISC",
