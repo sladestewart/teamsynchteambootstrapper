@@ -1,0 +1,79 @@
+#!/bin/bash
+
+cd full_bootstrap
+
+if [ "$1" == "help" ]; then
+  npm run help
+elif [ "$1" == "template" ]; then
+  if [ "$2" == "-d" ]; then
+    echo "template list default (implicit)"
+    npm run template_list_default
+  elif [ "$2" == "ls" ]; then
+    if [ "$3" == "-d" ]; then
+      echo "template list default (explicit)"
+      npm run template_list_default
+    else
+      echo "template list all"
+      npm run template_list_all
+    fi
+  else
+    echo "template list all (implicit)"
+    npm run template_list_all
+  fi
+elif [ "$1" == "create" ]; then
+  if [ "$2" == "-d" ]; then
+    if [ "$3" == "" ]; then
+      echo "create interactively from default template (explicit default, implicit interactive)"
+      npm run project_create_default_interactive
+    elif [ "$3" == "-i" ]; then
+      echo "create default interactively (everything explicit)"
+      npm run project_create_default_interactive
+    else
+      echo "create from default template project name provided"
+      grunt projectCreate:default:$3
+    fi
+  elif [ "$2" == "-i" ]; then
+    if [ "$3" == "" ]; then
+      echo "create interactively(explicit interactive)"
+      npm run project_create
+    elif [ "$3" == "-d" ]; then
+      echo "create default interactively (everything explicit)"
+      npm run project_create_default_interactive
+    else
+      echo "create interactively based on provided template"
+      grunt projectCreate:$3:interactive
+    fi
+  elif [ "$2" == "" ]; then
+    echo "create interactively"
+    npm run project_create
+  elif [ "$3" == "" ]; then
+    echo "create interactively from provided template name"
+    grunt projectCreate:$2
+  elif [ "$3" == "-i" ]; then
+    echo "create interactively from provided template name"
+    grunt projectCreate:$2
+  else
+    echo "create from provided template name with provided name"
+    grunt:createProject:$2:$3
+  fi
+elif [ "$1" == "get" ]; then
+  if [ "$2" == "" ]; then
+    echo "get interactively"
+    npm run project_get
+  elif [ "$2" == "-i" ]; then
+    echo "get interactively"
+    npm run project_get
+  elif [ "$2" == "all" ]; then
+    echo "get all"
+    npm run project_get_all
+  else
+    echo "get project"
+    grunt projectGet:$2
+  fi
+elif [ "$1" == "project" ]; then
+  echo "list projects"
+  npm run project_list
+else
+  echo "just begin"
+  npm run begin
+fi
