@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd full_bootstrap
+cd /Users/mac/teamsynchadmin
 
 if [ "$1" == "help" ]; then
   npm run help

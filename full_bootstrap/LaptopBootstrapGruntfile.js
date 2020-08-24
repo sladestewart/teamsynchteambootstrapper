@@ -10,7 +10,7 @@ module.exports = async function(grunt) {
       showExplanation();
 
       function showExplanation() {
-        console.log(
+        log(
           `
           ******************************************************************
           *                                                                 *
