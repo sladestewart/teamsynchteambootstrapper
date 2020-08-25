@@ -3,6 +3,7 @@ module.exports = function(grunt) {
     const os = require('os');
     const path = require('path');
     const readline = require('readline');
+    const { exec } = require('child_process');
 
     let teamSynchGithubAccountName = '';
     let teamSynchGithubAccountUrl = '';
@@ -11,6 +12,13 @@ module.exports = function(grunt) {
     let parentDirectoryPathValue = '';
     let adminPathValue = '';
     let projectsPathValue = '';
+    let adminFolderLocation = '';
+    let projectsFolderLocation = '';
+
+    let teamSynchFolderLocation = '';
+    let teamSynchFolderFullBootstrapLocation = '';
+    let teamSynchFolderFirstMinimalBootstrapLocation = '';
+    let teamSynchFolderFirstMinimalBootstrapBashLocation = '';
 
     const teamSynchAdditionalGithubAccountNames = [];
     const teamRepositories = [];
@@ -312,6 +320,9 @@ module.exports = function(grunt) {
             }
 
             function setUpBasedOnFolderAnswers() {
+                adminFolderLocation = getAdminFolderPath();
+                projectsFolderLocation = getProjectsFolderPath();
+
                 if (!createFolders()) return;
 
                 setUpAdminGruntFile();
@@ -323,8 +334,8 @@ module.exports = function(grunt) {
 
                 function createFolders() {
                     try {
-                        fs.mkdirSync(getAdminFolderPath());
-                        fs.mkdirSync(getProjectsFolderPath());
+                        fs.mkdirSync(adminFolderLocation);
+                        fs.mkdirSync(projectsFolderLocation);
 
                         return true;
                     }
@@ -339,6 +350,7 @@ module.exports = function(grunt) {
                         )
                     }
                 }
+                
                 function setUpAdminGruntFile() {
                     const adminGruntFileText = fs.readFileSync(
                         getAdminGruntFilePath(), 'utf8'
@@ -595,14 +607,11 @@ module.exports = function(grunt) {
         }
 
         function populateLocalTeamSynchRepoAndSynchIt() {
-            let teamSynchFolderLocation = '';
-            let teamSynchFolderFullBootstrapLocation = '';
-            let teamSynchFolderFirstMinimalBootstrapLocation = '';
-            let teamSynchFolderFirstMinimalBootstrapBashLocation = '';
 
             showExplanation();
             createTeamSynchFolder();
             populateTeamSynchFolder();
+            synchTeamSynchFolder();
 
             function createTeamSynchFolder() {
                 teamSynchFolderLocation = path.join(adminPathValue, 'TeamSynch');
@@ -613,27 +622,34 @@ module.exports = function(grunt) {
                 fs.mkdirSync(teamSynchFolderFirstMinimalBootstrapLocation);
                 teamSynchFolderFirstMinimalBootstrapBashLocation = path.join(teamSynchFolderFirstMinimalBootstrapLocation, 'bash');
                 fs.mkdirSync(teamSynchFolderFirstMinimalBootstrapBashLocation);
-
-
             }
 
             function populateTeamSynchFolder() {
-                fs.copyFileSync(
-                    '../README.md', path.join(teamSynchFolderLocation, 'README.md')
-                );
-
-
-                fs.copy
-
-                fs.copyFileSync(
-                    '../LaptopBootstrapGruntfile.js', 
-                    path.join(teamSynchFolderLocation, 'Gruntfile.js')
-                );
-
                 populateFirstMinimalBootstrapLocation();
+                populateFullBootstrapLocation();
+                populateTeamSynchLocation();
+
+                function populateTeamSynchLocation() {
+                    copyFile('just_do_it_and_damn_the_consequences_bash.sh');
+                    copyFile('just_do_it_and_damn_the_consequences_windows.sh');
+
+                    function copyFile(fileName) {
+                        fs.copyFileSync(
+                            path.join('../', fileName), 
+                            path.join(teamSynchFolderLocation, fileName)
+                        );
+                    }
+                }
 
                 function populateFullBootstrapLocation() {
                     copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
+                    copyFile('AdminGruntFile.js');
+                    copyFile('AdminPackage.json');
+                    copyFile('LaptopBootstrapReadme.md', 'README.md');
+                    copyFile('after_minimal_bash.sh');
+                    copyFile('after_minimal_windows.sh');
+                    copyFile('full_bash.sh');
+                    copyFile('full_windows.sh');
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(
@@ -688,6 +704,86 @@ module.exports = function(grunt) {
                   Nothing is required from you for this process.
                   `
                 );
+            }
+
+            function synchTeamSynchFolder() {
+                exec(`cd ${teamSynchFolderLocation}`, (err, stdout) => {
+                    if (err) {
+                        logError();
+                        return;
+                    }
+
+                    doGitInit();
+                });
+
+                function doGitInit() {
+                    exec('git init', (err, stdout) => {
+                        if (err) {
+                            logError();
+                            return;
+                        }
+
+                        doGitAdd();
+                    })
+                }
+
+                function doGitAdd() {
+                    exec('git add .', (err, stdout) => {
+                        if (err) {
+                            logError();
+                            return;
+                        }
+
+                        doGitCommit();
+                    })
+                }
+
+                function doGitCommit() {
+                    exec(`git commit -m 'establishing TeamSynch repository'`, (err, stdout) => {
+                        if (err) {
+                            logError();
+                            return;
+                        }
+
+                        doGitRemoteAdd();
+                    })
+                }
+
+                function doGitRemoteAdd() {
+                    exec(`git remote add origin git@github.com:${teamSynchGithubAccountName}/TeamSynch.git`, (err, stdout) => {
+                        if (err) {
+                            logError();
+                            return;
+                        }
+
+                        doGitPush();
+                    })
+                }
+
+                function doGitPush() {
+                    exec('git push -u origin master', (err, stdout) => {
+                        if (err) {
+                            logError();
+                            return;
+                        }
+
+                        teamSynchRepoPopulatedAndSynched = true;
+                        doNext();
+                    })
+                }
+
+
+
+                function logError() {
+                    log(
+                        `
+                        *************ERROR*************
+                        Error occurred: ${err}
+                        This process will now terminate so you can investigate and correct.
+                        When you are ready, you can start this process agin ('npm start).
+                        `
+                    );
+                }
             }
         }
     });

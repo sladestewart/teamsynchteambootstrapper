@@ -1,0 +1,24 @@
+{
+  "name": "full_bootstrap_using_grunt",
+  "version": "1.0.0",
+  "description": "Bootstraps a laptop using grunt.",
+  "main": "none",
+  "scripts": {
+    "test": "echo \"This is not that kind of project\" && exit 0",
+    "finishbootstrap": "grunt",
+    "managesysteminfo": "grunt managesysteminfo:I",
+    "managesysteminfo_default": "grunt managesysteminfo:default",
+    "managesysteminfo_help": "grunt managesysteminfo:help",
+    "help": "grunt help",
+    "begin": "echo \"beginning\"",
+    "template_list_all": "echo \"template_list_all\"",
+    "template_list_default": "echo \"template_list_default\""
+  },
+  "author": "Slade Stewart",
+  "license": "ISC",
+  "dependencies": {
+    "grunt": "^1.2.1",
+    "grunt-cli": "^1.3.2",
+    "rimraf": "^3.0.2"
+  }
+}
