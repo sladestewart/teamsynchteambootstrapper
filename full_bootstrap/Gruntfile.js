@@ -8,8 +8,13 @@ module.exports = function(grunt) {
     let teamSynchGithubAccountUrl = '';
     let teamSynchUrl = '';
 
+    let parentDirectoryPathValue = '';
+    let adminPathValue = '';
+    let projectsPathValue = '';
+
     const teamSynchAdditionalGithubAccountNames = [];
     const teamRepositories = [];
+    const templateRepositories = [];
 
     
     grunt.registerTask('default', function() {
@@ -18,6 +23,9 @@ module.exports = function(grunt) {
         let requiredTeamSynchInfoGathered = false;
         let additionalHubsGathered = false;
         let teamRepositoriesGathered = false;
+        let templateRepositoryInfoGathered = false;
+        let teamSynchRepoPopulatedAndSynched = false;
+        let laptopBootstrapped = false;
 
 
 
@@ -59,6 +67,19 @@ module.exports = function(grunt) {
                 return;
             }
 
+            if (!templateRepositoryInfoGathered) {
+                gatherTemplateRepositoryInfo();
+                return;
+            }
+
+            if (!teamSynchRepoPopulatedAndSynched) {
+                populateLocalTeamSynchRepoAndSynchIt();
+            }
+
+            if (!laptopBootstrapped) {
+                //???
+            }
+
             log('DONEXT DONEXT DONEXT');
             done();
         }
@@ -83,17 +104,28 @@ module.exports = function(grunt) {
               2) GET FOLDER PATHS AND CREATE FOLDERS: You specifying where you want your Team's TeamSynch Admin and your Team's Projects Folders 
               to exist on each laptop.
 
-              3) GATHER TEAMSYNCH REPOSITORY INFO: This process will ask you for the Url where you created your TeamSynch repository.
+              3) GATHER TEAMSYNCH REPOSITORY INFO AND ADDITIONAL HUBS: This process will ask you for the Url where you created your TeamSynch repository.
 
-              4) GATHER ADDITIONAL TEAM HUB INFO (Optional): You can specify any additional Team Hubs, along with - for each hub - 
-              any Team Repositories in that hub.
-
+              4) GATHER REPOSITORY INFO FOR HUBS: You will be asked for any info regarding repositories, for each of the hubs you 
+              have identified.
 
               5) GATHER TEMPLATE REPOSITORY INFORMATION (Optional): You can identify one or more Project Template Repositories (that adhere to the TeamSynch Project Template 
               Repository standard), and specify Project Templates to add to your team's Team Synch Repository
               
-              7) LOCAL TEAM SYNCH REPOSITORY: Create the Team Synch Local Repository, populate it, and initialize it; then push all the 
-              new artifacts to the Remote TeamSynch Repository.
+              6) LOCAL TEAMSYNCH REPOSITORY: Create the Team Synch Local Repository, populate it, and initialize it; then push all the 
+              new artifacts to the Remote TeamSynch Repository.  
+              
+              NOTE: Once the Local Repository is populated, it will have some similarities 
+              with the Public TeamSynch Repository you have cloned and are working with now; but it will also have crucial differences.  
+              The purpose of this Public TeamSynch Repository (that you're working with now) is mainly to bootstrap your team's TeamSynch 
+              Repository; the purpose of that created Repository (your team's TeamSynch Repository) is to bootstrap a given team member's 
+              laptop, and then to enable that team member (on that laptop) to perform TeamSynch functions.
+
+              7) FINISH BOOTSTRAPPING THIS LAPTOP: Once you have bootstrapped the remote TeamSynch Repository, then any team member can clone the 
+              repository, bootstrap their laptop, and begin using the TeamSynch functions.  In order to bootstrap the TeamSynch 
+              Repository, this process has partially bootstrapped this laptop.  For your convenience, and also so as not to leave 
+              this laptop in a partial state, the final step will be to bootstrap this laptop with the TeamSynch system.  This means 
+              that you do not need to perform a separate step to bootstrap this particular laptop.
               `
             );
         }
@@ -101,9 +133,6 @@ module.exports = function(grunt) {
         function getFolderPathsAndCreateFolders() {
             let useParentDirectory = false;
             let parentDirectoryShouldBeHomeDirectory = false;
-            let parentDirectoryPathValue = '';
-            let adminPathValue = '';
-            let projectsPathValue = '';
     
             showExplanation();
             askQuestionAboutDefaults();
@@ -373,7 +402,7 @@ module.exports = function(grunt) {
                   `
                   ******************************************************************
                   *                                                                 *
-                  *     3. GATHER REQUIRED INFO FOR TEAM'S TEAMSYNCH REPOSITORY     *
+                  *     3. GATHER TEAMSYNCH REPOSITORY INFO AND ADDITIONAL HUBS     *
                   *                                                                 *
                   ******************************************************************
     
@@ -407,7 +436,6 @@ module.exports = function(grunt) {
        }
 
         function gatherAnyAdditionalHubs() {
-            showExplanation();
             getNextHubAccountName();
 
             function getNextHubAccountName() {
@@ -445,26 +473,6 @@ module.exports = function(grunt) {
                     }
                 );
             }
-
-            function showExplanation() {
-                log(
-                  `
-                  ******************************************************************
-                  *                                                                 *
-                  *            4. GATHER ADDITIONAL TEAM HUB INFO                   *
-                  *                                                                 *
-                  ******************************************************************
-    
-                  Now we'll gather from you the account names for any additional hubs you have.
-                  This step is optional; if at any time you no longer have hubs to specify, answer 
-                  in the negative to the question 'Do you have any (more) hubs to specify?'  For this 
-                  question, an answer of 'Y', 'y', 'YES', 'Yes' or 'yes' will indicate an answer in the 
-                  affirmative, and **any other answer** (including 'N', 'No', etc. and including an empty answer) 
-                  will indicate an answer in the negative.
-                  `
-                );
-            }
-
         }
 
         function gatherAnyTeamRepositories() {
@@ -527,28 +535,163 @@ module.exports = function(grunt) {
                 }
             }
 
-            
+            function showExplanation() {
+                log(
+                  `
+                  ******************************************************************
+                  *                                                                 *
+                  *              4. GATHER REPOSITORY INFO FOR HUBS                 *
+                  *                                                                 *
+                  ******************************************************************
+
+                  Now you have an opportunity to enter, for each hub you've identified (including your 
+                  TeamSynch hub), a list of repositories in that hub, that you want to be in the official TeamSynch 
+                  repository list.
+                  `
+                );
+            }
+        }
+
+        function gatherTemplateRepositoryInfo() {
+            showExplanation();
+            gatherIt();
+
+            function gatherIt() {
+                const rl = getReadline();
+
+                rl.question(
+                    'Enter the acount name of the first or next Template Repository Hub.  If you have no more to enter, type \'IAMDONE\' (all caps): ',
+    
+                    answer => {
+                        if (answer === 'IAMDONE') {
+                            rl.close();
+                            console.log(templateRepositories);
+                            templateRepositoryInfoGathered = true;
+                            doNext();
+                            return;
+                        }
+    
+                        rl.close();
+                        templateRepositories.push(answer);
+                        gatherIt();
+                    }
+                );
+            }
 
             function showExplanation() {
                 log(
                   `
                   ******************************************************************
                   *                                                                 *
-                  *             5. GATHER ADDITIONAL TEAM REPOSITORIES              *
+                  *            5. GATHER TEMPLATE REPOSITORY INFORMATION            *
                   *                                                                 *
                   ******************************************************************
-
-                  Now, if you choose, we'll go through each of the hubs you've identified (including the 'target hub' you 
-                  identified for the TeamSynch Repository).  For each one, you can indicate that there are 
-                  Repositories in it, that you wish to make Team Repositories.  For those you indicate, this process 
-                  will get a list of the Repositories in that Hub, and cycle through them, asking if you wish to 
-                  add them to the list of Team Repositories.  Then, for each you choose, it will add it.
+                  
+                  Now you can enter the account names for all Template Repository Hubs (hubs containing Repositories of 
+                  Project Templates, and adhering to the TeamSynch Template Repository standard).
                   `
                 );
             }
         }
-    }
-);
+
+        function populateLocalTeamSynchRepoAndSynchIt() {
+            let teamSynchFolderLocation = '';
+            let teamSynchFolderFullBootstrapLocation = '';
+            let teamSynchFolderFirstMinimalBootstrapLocation = '';
+            let teamSynchFolderFirstMinimalBootstrapBashLocation = '';
+
+            showExplanation();
+            createTeamSynchFolder();
+            populateTeamSynchFolder();
+
+            function createTeamSynchFolder() {
+                teamSynchFolderLocation = path.join(adminPathValue, 'TeamSynch');
+                fs.mkdirSync(teamSynchFolderLocation);
+                teamSynchFolderFullBootstrapLocation = path.join(teamSynchFolderLocation, 'full_bootstrap');
+                fs.mkdirSync(teamSynchFolderFullBootstrapLocation);
+                teamSynchFolderFirstMinimalBootstrapLocation = path.join(teamSynchFolderLocation, 'first_minimal_bootstrap');
+                fs.mkdirSync(teamSynchFolderFirstMinimalBootstrapLocation);
+                teamSynchFolderFirstMinimalBootstrapBashLocation = path.join(teamSynchFolderFirstMinimalBootstrapLocation, 'bash');
+                fs.mkdirSync(teamSynchFolderFirstMinimalBootstrapBashLocation);
+
+
+            }
+
+            function populateTeamSynchFolder() {
+                fs.copyFileSync(
+                    '../README.md', path.join(teamSynchFolderLocation, 'README.md')
+                );
+
+
+                fs.copy
+
+                fs.copyFileSync(
+                    '../LaptopBootstrapGruntfile.js', 
+                    path.join(teamSynchFolderLocation, 'Gruntfile.js')
+                );
+
+                populateFirstMinimalBootstrapLocation();
+
+                function populateFullBootstrapLocation() {
+                    copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
+
+                    function copyFile(fileName, targetFileName) {
+                        fs.copyFileSync(
+                            fileName, 
+                            targetLocation(targetFileName || fileName)
+                        );
+                    }
+
+                    function targetLocation(fileName) {
+                        return path.join(teamSynchFolderFullBootstrapLocation, fileName);
+                    }
+                }
+
+                function populateFirstMinimalBootstrapLocation() {
+                    copyFile('full_first_minimal_bootstrap.sh');
+                    copyFile('install_atom_using_homebrew.sh');
+                    copyFile('README.md');
+                    copyFile('install_homebrew.sh');
+                    copyFile('install_homebrew_then_install_nodenpxnpm_using_homebrew.sh');
+                    copyFile('install_nodenpxnpm_using_homebrew.sh');
+
+                    function copyFile(fileName) {
+                        fs.copyFileSync(
+                            theSourceLocation(fileName),
+                            theTargetLocation(fileName)
+                        );
+                    }
+
+                    function theSourceLocation(fileName) {
+                        return path.join('../first_minimal_bootstrap/bash', fileName);
+                    }
+
+                    function theTargetLocation(fileName) {
+                        return path.join(teamSynchFolderFirstMinimalBootstrapBashLocation, fileName);
+                    }
+                }
+            }
+
+            function showExplanation() {
+                log(
+                  `
+                  ******************************************************************
+                  *                                                                 *
+                  *              6. LOCAL TEAMSYNCH REPOSITORY                      *
+                  *                                                                 *
+                  ******************************************************************
+
+                  This process is now creating a local TeamSynch repository, populating it with the appropriate 
+                  artifacts, and then synching it to the remote TeamSynch repository you indicated 
+                  (${teamSynchGithubAccountUrl}).
+
+                  Nothing is required from you for this process.
+                  `
+                );
+            }
+        }
+    });
+    
     grunt.registerTask('evaluateEnvironment', environmentIsOkay);
 
     function environmentIsOkay() {
@@ -620,20 +763,20 @@ module.exports = function(grunt) {
 
         function showExplanation() {
             log(
-              `
-              ******************************************************************
-              *                                                                 *
-              *                 1. EVALUATING ENVIRONMENT                       *
-              *                                                                 *
-              ******************************************************************
-      
-              The first step is to examine your TeamSynch environment to ensure all necessary 
-              artifacts are present before proceeding.
-              
-              Usually all necessary artifacts are present; however, if not, then this process will inform 
-              you of the particular missing artifacts, and then terminate so you can correct the situation.  
-              After correcting the situation, you can restart this process.
-              `
+                `
+                ******************************************************************
+                *                                                                 *
+                *                 1. EVALUATING ENVIRONMENT                       *
+                *                                                                 *
+                ******************************************************************
+        
+                The first step is to examine your TeamSynch environment to ensure all necessary 
+                artifacts are present before proceeding.
+                
+                Usually all necessary artifacts are present; however, if not, then this process will inform 
+                you of the particular missing artifacts, and then terminate so you can correct the situation.  
+                After correcting the situation, you can restart this process.
+                `
             );
         }
     }
@@ -654,7 +797,7 @@ module.exports = function(grunt) {
             output: process.stdout,
             terminal: false
         });
-}
+    }
     function log(toLog) {
         console.log(toLog);
     }
