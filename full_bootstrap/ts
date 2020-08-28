@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /Users/mac/teamsynchadmin
+cd ADMIN_FOLDER_PATH/Working
 
 if [ "$1" == "help" ]; then
   npm run help
