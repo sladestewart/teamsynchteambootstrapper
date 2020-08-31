@@ -196,7 +196,7 @@ module.exports = function(grunt) {
         if (!fs.existsSync(pathToUserLocal)) fs.mkdirSync(pathToUserLocal);
         pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
         if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirSync(pathToUserLocalBin);
-        let pathToTsInUserLocalBin = ''; path.join(pathToUserLocalBin, 'ts');
+        let pathToTsInUserLocalBin = path.join(pathToUserLocalBin, 'ts');
 
         fs.copySync(
           path.join(__dirname, 'ts'),
