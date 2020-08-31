@@ -146,7 +146,7 @@ module.exports = function(grunt) {
 
         function copyFile(sourceFile, targetFile) {
           fs.copyFileSync(
-            path.join(adminFolderPath, sourceFile),
+            path.join(__dirname, sourceFile),
             path.join(workingDirectoryFolderPath, targetFile || sourceFile)
           );
         }
