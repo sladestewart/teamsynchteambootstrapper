@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 
         showExplanation();
 
-        if (adminFolderPath || projectsFolderExists) {
+        if (adminFolderExists || projectsFolderExists) {
           log(
             `
             ***********ACTION REQUIRED (TERMINATING)**********
@@ -261,5 +261,4 @@ module.exports = function(grunt) {
         console.log(toLog);
       }
     });
-  }
 };
