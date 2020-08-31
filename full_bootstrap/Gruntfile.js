@@ -1077,6 +1077,34 @@ module.exports = function(grunt) {
                 copyFile('AdminPackage.json', 'package.json');
                 log('7A4) Setting up ts script');
                 setUpTsScript();
+                log('7A5) Installing npm packages in Working Folder');
+                installNpmPackages();
+
+                function installNpmPackages() {
+                    const currentDirectory = process.cwd();
+                    process.chdir(workingFolderLocation);
+    
+                    exec('npm install', (err) => {
+                        if (err) {
+                            log(
+                                `
+                                ***********ERROR (TERMINATING)***********
+                                Encountered an error while attempting to install npm packages in TeamSynch Folder.
+                                This process will now terminate so you can investigate and correct.  When ready, restart 
+                                this process ('npm start').
+    
+                                Error:
+                                ${err}
+                                `
+                            );
+    
+                            return;
+                        }
+                    });
+    
+                    process.chdir(currentDirectory);
+                }
+    
 
                 function setUpTsScript() {
                     const pathToUserLocal = '/usr/local/';
