@@ -223,6 +223,9 @@ module.exports = function(grunt) {
       function installNpmPackages() {
         showExplanation();
 
+        const currentDirectpry = process.cwd();
+        process.chdir(workingDirectoryFolderPath);
+
         exec('npm install', (err) => {
           if (err) {
             log(
@@ -237,6 +240,8 @@ module.exports = function(grunt) {
             return;
           }
 
+          process.chdir(currentDirectpry);
+          
           log(
             `
             *******************COMPLETE*******************
