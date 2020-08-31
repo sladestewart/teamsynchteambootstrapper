@@ -188,6 +188,12 @@ module.exports = function(grunt) {
       }
 
       function makeTsAvailableFromAnywhere() {
+        showExplanation();
+
+        fs.copyFileSync(
+          path.join(__dirname, 'ts'),
+          path.join('/usr/local/bin', 'ts')
+        );
 
         function showExplanation() {
           log(
@@ -209,7 +215,7 @@ module.exports = function(grunt) {
       function installNpmPackages() {
         showExplanation();
 
-        exec('npm install', (err, stdout, stderr) => {
+        exec('npm install', (err) => {
           if (err) {
             log(
               `
@@ -220,18 +226,20 @@ module.exports = function(grunt) {
               `
             );
 
-            log(
-              `
-              *******************COMPLETE*******************
-              *******************COMPLETE*******************
-              *******************COMPLETE*******************
-              This process is complete and TeamSynch is now ready on your laptop.
-
-              Enjoy!
-              `
-            )
+            return;
           }
-        });
+
+          log(
+            `
+            *******************COMPLETE*******************
+            *******************COMPLETE*******************
+            *******************COMPLETE*******************
+            This process is complete and TeamSynch is now ready on your laptop.
+
+            Enjoy!
+            `
+          );
+      });
 
         function showExplanation() {
           log(
