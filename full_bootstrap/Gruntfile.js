@@ -1038,7 +1038,7 @@ module.exports = function(grunt) {
         function finishSettingUpTeamSynch() {
             showExplanation();
             setUpWorkingDirectory();
-            installNpmPackages();
+            //installNpmPackages();
 
             function installNpmPackages() {
                 log('7B) Install npm packages in TeamSynch location');
