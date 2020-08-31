@@ -139,7 +139,7 @@ module.exports = function(grunt) {
         showExplanation();
 
         log('2A) Copy AdminGruntFile.js as Gruntfile.js');
-        copyfile('AdminGruntFile.js', 'Gruntfile.js');
+        copyFile('AdminGruntFile.js', 'Gruntfile.js');
         log('2B) Copy AdminPackage.json as Package.json');
         copyFile('AdminPackage.json', 'Package.json');
 
