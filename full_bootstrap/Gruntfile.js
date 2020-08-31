@@ -742,6 +742,8 @@ module.exports = function(grunt) {
                     copyFile('full_bash.sh');
                     log('B9) Copying full_windows script');
                     copyFile('full_windows.sh');
+                    log('B10) Copying package.json');
+                    copyFile('package.json');
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(
