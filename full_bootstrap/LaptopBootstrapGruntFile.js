@@ -13,6 +13,9 @@ module.exports = function(grunt) {
   const teamRepositories = TEAM_REPOSITORIES;
 
   const defaultTeamHub = 'NO_DEFAULT_TEAM_HUB';
+  const pathToUserLocal = '/usr/local/';
+  let pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
+  let pathToTsInUserLocalBin = ''; path.join(pathToUserLocalBin, 'ts');
 
 
   function haveDefaultTeamHub() {
@@ -169,7 +172,7 @@ module.exports = function(grunt) {
 
       function makeTsScriptExecutable() {
         showExplanation();
-        fs.chmod('/usr/local/bin/ts', 0o555);
+        fs.chmod(pathToTsInUserLocalBin, 0o555);
 
         function showExplanation() {
           log(
@@ -190,10 +193,14 @@ module.exports = function(grunt) {
 
       function makeTsAvailableFromAnywhere() {
         showExplanation();
+        if (!fs.existsSync(pathToUserLocal)) fs.mkdirSync(pathToUserLocal);
+        pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
+        if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirs(pathToUserLocalBin);
+        let pathToTsInUserLocalBin = ''; path.join(pathToUserLocalBin, 'ts');
 
-        fs.copyFileSync(
+        fs.copySync(
           path.join(__dirname, 'ts'),
-          path.join('/usr/local/bin', 'ts')
+          pathToTsInUserLocalBin
         );
 
         function showExplanation() {
