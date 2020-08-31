@@ -172,7 +172,7 @@ module.exports = function(grunt) {
 
       function makeTsScriptExecutable() {
         showExplanation();
-        fs.chmod(pathToTsInUserLocalBin, 0o555);
+        fs.chmodSync(pathToTsInUserLocalBin, 0o555);
 
         function showExplanation() {
           log(
