@@ -1054,8 +1054,8 @@ module.exports = function(grunt) {
                 installNpmPackages();
 
                 function installNpmPackages() {
-                    const currentDirectory = fs.cwd();
-                    fs.chdir(workingFolderLocation);
+                    const currentDirectory = process.cwd();
+                    process.chdir(workingFolderLocation);
 
                     exec('npm install', (err) => {
                         if (err) {
@@ -1075,7 +1075,7 @@ module.exports = function(grunt) {
                         }
                     });
 
-                    fs.chdir(currentDirectory);
+                    process.chdir(currentDirectory);
                 }
 
                 function setUpTsScript() {
