@@ -4,8 +4,15 @@
     "description": "Admin Functions (TeamSynch system).",
     "main": "none",
     "scripts": {
-        "help": "echo \"help screen\""
-    },
+      "test": "echo \"This is not that kind of project\" && exit 0",
+      "managesysteminfo": "grunt managesysteminfo:I",
+      "managesysteminfo_default": "grunt managesysteminfo:default",
+      "managesysteminfo_help": "grunt managesysteminfo:help",
+      "help": "grunt help",
+      "begin": "echo \"beginning\"",
+      "template_list_all": "echo \"template_list_all\"",
+      "template_list_default": "echo \"template_list_default\""
+      },
     "author": "Slade Stewart",
     "license": "ISC",
     "dependencies": {
