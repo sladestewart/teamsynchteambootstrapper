@@ -5,11 +5,17 @@ module.exports = function(grunt) {
   const util = require('util');
   const exec = require('child_process').exec;
 
-  const adminFolderPath = 'ADMIN_FOLDER_PATH';
-  const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
-  const workingDirectoryFolderPath = 'WORKING_FOLDER_PATH';
+  const adminFolderPath = '/Users/mac/teamsynchadmin';
+  const projectsFolderPath = '/Users/mac/projects';
+  const workingDirectoryFolderPath = '/Users/mac/teamsynchadmin/Working';
 
-  const teamRepositories = TEAM_REPOSITORIES;
+  const teamRepositories = [
+  {
+    accountId: 'sladestewart2',
+    repositories: [ 'sladestewartdotcom' ]
+  },
+  { accountId: 'otherhub1', repositories: [ 'otherhub1repo1' ] }
+];
 
   const defaultTeamHub = 'NO_DEFAULT_TEAM_HUB';
 
