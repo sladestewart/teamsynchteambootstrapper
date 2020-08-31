@@ -1038,6 +1038,33 @@ module.exports = function(grunt) {
         function finishSettingUpTeamSynch() {
             showExplanation();
             setUpWorkingDirectory();
+            installNpmPackages();
+
+            function installNpmPackages() {
+                log('7B) Install npm packages in TeamSynch location');
+                const currentDirectory = process.cwd();
+                process.chdir(path.join(adminFolderLocation, 'TeamSynch', 'full_bootstrap'));
+
+                exec('npm install', (err) => {
+                    if (err) {
+                        log(
+                            `
+                            ***********ERROR (TERMINATING)***********
+                            Encountered an error while attempting to install npm packages in TeamSynch Folder.
+                            This process will now terminate so you can investigate and correct.  When ready, restart 
+                            this process ('npm start').
+
+                            Error:
+                            ${err}
+                            `
+                        );
+
+                        return;
+                    }
+                });
+
+                process.chdir(currentDirectory);
+            }
 
             function setUpWorkingDirectory() {
                 log('7A) Set up Working Directory');
@@ -1050,33 +1077,6 @@ module.exports = function(grunt) {
                 copyFile('AdminPackage.json', 'package.json');
                 log('7A4) Setting up ts script');
                 setUpTsScript();
-                log('7A5) Installing npm packages in TeamSynch Folder');
-                installNpmPackages();
-
-                function installNpmPackages() {
-                    const currentDirectory = process.cwd();
-                    process.chdir(workingFolderLocation);
-
-                    exec('npm install', (err) => {
-                        if (err) {
-                            log(
-                                `
-                                ***********ERROR (TERMINATING)***********
-                                Encountered an error while attempting to install npm packages in TeamSynch Folder.
-                                This process will now terminate so you can investigate and correct.  When ready, restart 
-                                this process ('npm start').
-
-                                Error:
-                                ${err}
-                                `
-                            );
-
-                            return;
-                        }
-                    });
-
-                    process.chdir(currentDirectory);
-                }
 
                 function setUpTsScript() {
                     const pathToUserLocal = '/usr/local/';
