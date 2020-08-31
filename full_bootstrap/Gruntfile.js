@@ -391,8 +391,7 @@ module.exports = function(grunt) {
 
                     const newBootstrapLaptopGruntFileText = bootstrapLaptopGruntFileText
                         .replace('ADMIN_FOLDER_PATH', adminFolderLocation)
-                        .replace('PROJECTS_FOLDER_PATH', projectsFolderLocation)
-                        .replace('WORKING_FOLDER_PATH', workingFolderLocation);
+                        .replace('PROJECTS_FOLDER_PATH', projectsFolderLocation);
 
 
                     fs.writeFileSync(getLaptopBootstrapGruntFilePath(), newBootstrapLaptopGruntFileText);
@@ -769,13 +768,7 @@ module.exports = function(grunt) {
                         );
 
                         let newLaptopBootstrapGruntFileText = currentLaptopBootstrapGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories))
-                            .replace('WORKING_FOLDER_PATH', workingFolderLocation)
-
-                        if (haveDefaultTeamHub()) {
-                            newBootstrapLaptopGruntFileText = newLaptopBootstrapGruntFileText
-                                .replace('NO_DEFAULT_TEAM_HUB', defaultTeamHub());
-                        }
+                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
 
                         fs.writeFileSync(
                             laptopBootstrapGruntFilePath, newLaptopBootstrapGruntFileText
