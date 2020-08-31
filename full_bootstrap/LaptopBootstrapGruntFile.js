@@ -194,7 +194,7 @@ module.exports = function(grunt) {
       function makeTsAvailableFromAnywhere() {
         showExplanation();
         if (!fs.existsSync(pathToUserLocal)) fs.mkdirSync(pathToUserLocal);
-        pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
+        pathToUserLocalBin = path.join(pathToUserLocal, 'bin');
         if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirSync(pathToUserLocalBin);
         let pathToTsInUserLocalBin = path.join(pathToUserLocalBin, 'ts');
 
