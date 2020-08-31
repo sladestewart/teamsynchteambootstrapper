@@ -1,3 +1,5 @@
+const { REPL_MODE_SLOPPY } = require('repl');
+
 module.exports = function(grunt) {
     const fs = require('fs-extra');
     const os = require('os');
@@ -15,6 +17,7 @@ module.exports = function(grunt) {
     let projectsPathValue = '';
     let adminFolderLocation = '';
     let projectsFolderLocation = '';
+    let workingFolderLocation = '';
 
     let teamSynchFolderLocation = '';
     let teamSynchFolderFullBootstrapLocation = '';
@@ -94,10 +97,29 @@ module.exports = function(grunt) {
             }
 
             if (!laptopBootstrapped) {
-                //???
+                finishSettingUpTeamSynch();
+                return;
             }
 
-            log('DONEXT DONEXT DONEXT');
+
+            log(
+                `
+                ******************COMPLETE***************
+                ******************COMPLETE***************
+                ******************COMPLETE***************
+                ******************COMPLETE***************
+
+                Congratulations!  You have completed the TeamSynch bootstrapping process for both your Team, and this 
+                laptop.
+
+                To start working with the TeamSynch system, from a shell type 'ts'.  To see Help Info for the TeamSynch system, 
+                you can type 'ts help'.  Additionally, once you have begun the TeamSynch process (by typing 'ts'), you can 
+                show help by typing 'npm run help'.
+
+                Happy Ts-in' !!!!!!
+                `
+            );
+
             done();
         }
   
@@ -331,6 +353,7 @@ module.exports = function(grunt) {
             function setUpBasedOnFolderAnswers() {
                 adminFolderLocation = getAdminFolderPath();
                 projectsFolderLocation = getProjectsFolderPath();
+                workingFolderLocation = path.join(adminFolderLocation, 'Working');
 
                 if (!createFolders()) return;
 
@@ -344,8 +367,8 @@ module.exports = function(grunt) {
 
                 function createFolders() {
                     try {
-                        fs.mkdirSync(adminFolderLocation);
-                        fs.mkdirSync(projectsFolderLocation);
+                        fs.mkdirSync(adminFolderLocation, {resursive: true});
+                        fs.mkdirSync(projectsFolderLocation, {recursive: true});
 
                         return true;
                     }
@@ -367,8 +390,9 @@ module.exports = function(grunt) {
                     );
 
                     const newBootstrapLaptopGruntFileText = bootstrapLaptopGruntFileText
-                        .replace('ADMIN_FOLDER_PATH', getAdminFolderPath())
-                        .replace('PROJECTS_FOLDER_PATH', getProjectsFolderPath());
+                        .replace('ADMIN_FOLDER_PATH', adminFolderLocation)
+                        .replace('PROJECTS_FOLDER_PATH', projectsFolderLocation)
+                        .replace('WORKING_FOLDER_PATH', workingFolderLocation);
 
 
                     fs.writeFileSync(getLaptopBootstrapGruntFilePath(), newBootstrapLaptopGruntFileText);
@@ -384,8 +408,7 @@ module.exports = function(grunt) {
                     );
 
                     const newAdminGruntFileText = adminGruntFileText
-                        .replace('PROJECTS_FOLDER_PATH', getProjectsFolderPath()
-                    );
+                        .replace('PROJECTS_FOLDER_PATH', projectsFolderLocation);
 
 
                     fs.writeFileSync(getAdminGruntFilePath(), newAdminGruntFileText);
@@ -399,7 +422,7 @@ module.exports = function(grunt) {
                     const tsFilePath = getTsFilePath();
 
                     const tsFileText = fs.readFileSync(getTsFilePath(), 'utf8');
-                    const newTsFileText = tsFileText.replace('ADMIN_FOLDER_PATH', getAdminFolderPath());
+                    const newTsFileText = tsFileText.replace('WORKING_FOLDER_PATH', workingFolderLocation);
 
                     fs.writeFileSync(getTsFilePath(), newTsFileText);
                     
@@ -485,12 +508,9 @@ module.exports = function(grunt) {
 
                     answer => {
                         if (answer === 'IAMDONE') {
-                            console.log('*****GATHERED ALL HUBS');
-                            console.log(teamSynchAdditionalGithubAccountNames);
                             rl.close();
 
                             if (teamSynchAdditionalGithubAccountNames.length > 0) {
-                                console.log('length > 0');
                                 const rl2 = getReadline();
         
                                 rl2.question(
@@ -745,11 +765,12 @@ module.exports = function(grunt) {
                         );
                             
                         let newLaptopBootstrapGruntFileText = currentLaptopBootstrapGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
+                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories))
+                            .replace('WORKING_FOLDER_PATH', workingFolderLocation)
 
                         if (haveDefaultTeamHub()) {
                             newBootstrapLaptopGruntFileText = newLaptopBootstrapGruntFileText
-                                .replace('DEFAULT_TEAM_HUB', defaultTeamHub());
+                                .replace('NO_DEFAULT_TEAM_HUB', defaultTeamHub());
                         }
 
                         fs.writeFileSync(
@@ -758,9 +779,9 @@ module.exports = function(grunt) {
                     }
 
                     function writeTeamRepositoriesInfoIntoAdminGruntFile() {
-                        log('B1aii) Writing TeamRepositories info into the LaptopBootstrap grunt file');
+                        log('B1aii) Writing TeamRepositories info into the Admin grunt file');
                         const adminGruntFilePath = path.join(
-                            __dirname, 'LaptopBootstrapGruntFile.js'
+                            __dirname, 'AdminGruntFile.js'
                         );
 
                         const currentAdminGruntFileText = fs.readFileSync(
@@ -769,10 +790,12 @@ module.exports = function(grunt) {
                             
                         let newAdminGruntFileText = currentAdminGruntFileText
                             .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
+                        
 
                             if (haveDefaultTeamHub()) {
-                            newAdminGruntFileText = newAdminGruntFileText
-                                .replace('DEFAULT_TEAM_HUB', defaultTeamHub());
+                                log('***Has default teamhub');
+                                newAdminGruntFileText = newAdminGruntFileText
+                                    .replace('NO_DEFAULT_TEAM_HUB', defaultTeamHub());
                         }
     
                         fs.writeFileSync(
@@ -1007,6 +1030,88 @@ module.exports = function(grunt) {
                         `
                     );
                 }
+            }
+        }
+
+        function finishSettingUpTeamSynch() {
+            showExplanation();
+            setUpWorkingDirectory();
+
+            function setUpWorkingDirectory() {
+                log('7A) Set up Working Directory');
+
+                log(`7A1) Create Working Directory (${workingFolderLocation})`);
+                fs.mkdirSync(workingFolderLocation);
+                log('7A2) Copy AdminGruntfile to Working Directory as Gruntfile.js');
+                copyFile('AdminGruntFile.js', 'Gruntfile.js');
+                log('7A3) Copy AdminPackage.json to Working Directory as package.json');
+                copyFile('AdminPackage.json', 'package.json');
+                log('7A4) Setting up ts script');
+                setUpTsScript();
+
+
+                function setUpTsScript() {
+                    const pathToUserLocal = '/usr/local/';
+                    if (!fs.existsSync(pathToUserLocal)) fs.mkdirSync(pathToUserLocal);
+                    const pathToUserLocalBin = path.join(pathToUserLocal, 'bin');
+                    if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirs(pathToUserLocalBin);
+                    const pathToTsInUserLocalBin = path.join(pathToUserLocalBin, 'ts');
+
+                    moveTsScriptToBin();
+                    makeTsScriptExecutable();
+
+                    function makeTsScriptExecutable() {
+                        fs.chmodSync(
+                            pathToTsInUserLocalBin, 0o555
+                        );
+                    }
+
+                    function moveTsScriptToBin() {
+                        fs.copySync(
+                            path.join(__dirname, 'ts'),
+                            pathToTsInUserLocalBin
+                        );
+                    }
+                }
+
+                function copyFile(sourceFileName, targetFileName) {
+                    fs.copyFileSync(
+                        theSourceLocation(sourceFileName),
+                        theTargetLocation(targetFileName || sourceFileName)
+                    );
+                }
+
+                function theSourceLocation(fileName) {
+                    return path.join(__dirname, fileName);
+                }
+
+                function theTargetLocation(fileName) {
+                    return path.join(workingFolderLocation, fileName);
+                }
+        }
+
+            function showExplanation() {
+                log(
+                  `
+                  ******************************************************************
+                  *                                                                 *
+                  *             7. FINISH BOOTSTRAPPING THIS LAPTOP                 *
+                  *                                                                 *
+                  ******************************************************************
+
+                  When someone is performing the 'normal TeamSynch Setup process', they will not be 
+                  bootstrapping TeamSynch for the Team, as you have just done.  They will be bootstrapping 
+                  their Laptop with the TeamSynch system.  As part of bootstrapping the Team, this process has 
+                  also partially bootstrapped this laptop.
+
+                  This process will now finish bootstrapping this laptop.
+
+                  At the end of this step, your laptop will 'look like' it would have looked if you had 
+                  cloned the TeamSynch Repository (that you created as part of this process), and kicked off that process.
+
+                  This step does not require any interaction from you.
+                  `
+                );
             }
         }
     });

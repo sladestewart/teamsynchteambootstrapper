@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ADMIN_FOLDER_PATH/Working
+cd WORKING_FOLDER_PATH
 
 if [ "$1" == "help" ]; then
   npm run help
@@ -74,6 +74,5 @@ elif [ "$1" == "project" ]; then
   echo "list projects"
   npm run project_list
 else
-  echo "just begin"
-  npm run begin
+  npm run help
 fi
