@@ -15,7 +15,8 @@ module.exports = function(grunt) {
 
 
   function haveDefaultTeamHub() {
-    return defaultTeamHub !== 'NO_DEFAULT_TEAM_HUB'
+    return defaultTeamHub !== 'NO_DEFAULT_TEAM_HUB';
+  }
 
     grunt.registerTask('default', () => {
       let proceed = true;
