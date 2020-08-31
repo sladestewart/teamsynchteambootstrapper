@@ -4,6 +4,7 @@ module.exports = function(grunt) {
   const fs = require('fs');
   const util = require('util');
   const exec = require('child_process').exec;
+  const path = require('path');
 
   const adminFolderPath = 'ADMIN_FOLDER_PATH';
   const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
