@@ -33,7 +33,7 @@ module.exports = function(grunt) {
     let templateHubsClone = null;
     let teamSynchDefaultHubId = null;
 
-    
+
     grunt.registerTask('default', function() {
         const done = this.async();
         let folderPathsGotten = false;
@@ -53,8 +53,8 @@ module.exports = function(grunt) {
         if (!environmentIsOkay()) {
             log(
                 `
-                This process will now terminate so you can investigate and correct; then 
-                you can restart this process by navigating here and typing 'npm start' or 
+                This process will now terminate so you can investigate and correct; then
+                you can restart this process by navigating here and typing 'npm start' or
                 'grunt'
                 `
             );
@@ -109,11 +109,11 @@ module.exports = function(grunt) {
                 ******************COMPLETE***************
                 ******************COMPLETE***************
 
-                Congratulations!  You have completed the TeamSynch bootstrapping process for both your Team, and this 
+                Congratulations!  You have completed the TeamSynch bootstrapping process for both your Team, and this
                 laptop.
 
-                To start working with the TeamSynch system, from a shell type 'ts'.  To see Help Info for the TeamSynch system, 
-                you can type 'ts help'.  Additionally, once you have begun the TeamSynch process (by typing 'ts'), you can 
+                To start working with the TeamSynch system, from a shell type 'ts'.  To see Help Info for the TeamSynch system,
+                you can type 'ts help'.  Additionally, once you have begun the TeamSynch process (by typing 'ts'), you can
                 show help by typing 'npm run help'.
 
                 Happy Ts-in' !!!!!!
@@ -122,7 +122,7 @@ module.exports = function(grunt) {
 
             done();
         }
-  
+
         function showExplanation() {
             log(
               `
@@ -134,36 +134,36 @@ module.exports = function(grunt) {
 
               Welcome to TeamSynch!  (https://github.com/sladestewart/teamsynchteambootstrapper/blob/master/README.md)
 
-              We are now going to bootstrap your team's TeamSynch (this process will guide you through that).  This will 
+              We are now going to bootstrap your team's TeamSynch (this process will guide you through that).  This will
               consist of:
-              1) EVALUATE ENVIRONMENT: Evaluating this laptop's environment to ensure that all necessary artifacts exist.  
-              If not, this process will list the missing artifacts (so you can investigate and correct), and terminate (after 
+              1) EVALUATE ENVIRONMENT: Evaluating this laptop's environment to ensure that all necessary artifacts exist.
+              If not, this process will list the missing artifacts (so you can investigate and correct), and terminate (after
               correcting the situation, you can start this process again).
 
-              2) GET FOLDER PATHS AND CREATE FOLDERS: You specifying where you want your Team's TeamSynch Admin and your Team's Projects Folders 
+              2) GET FOLDER PATHS AND CREATE FOLDERS: You specifying where you want your Team's TeamSynch Admin and your Team's Projects Folders
               to exist on each laptop.
 
               3) GATHER TEAMSYNCH REPOSITORY INFO AND ADDITIONAL HUBS: This process will ask you for the Url where you created your TeamSynch repository.
 
-              4) GATHER REPOSITORY INFO FOR HUBS: You will be asked for any info regarding repositories, for each of the hubs you 
+              4) GATHER REPOSITORY INFO FOR HUBS: You will be asked for any info regarding repositories, for each of the hubs you
               have identified.
 
-              5) GATHER TEMPLATE REPOSITORY INFORMATION (Optional): You can identify one or more Project Template Repositories (that adhere to the TeamSynch Project Template 
+              5) GATHER TEMPLATE REPOSITORY INFORMATION (Optional): You can identify one or more Project Template Repositories (that adhere to the TeamSynch Project Template
               Repository standard), and specify Project Templates to add to your team's Team Synch Repository
-              
-              6) LOCAL TEAMSYNCH REPOSITORY: Create the Team Synch Local Repository, populate it, and initialize it; then push all the 
-              new artifacts to the Remote TeamSynch Repository.  
-              
-              NOTE: Once the Local Repository is populated, it will have some similarities 
-              with the Public TeamSynch Repository you have cloned and are working with now; but it will also have crucial differences.  
-              The purpose of this Public TeamSynch Repository (that you're working with now) is mainly to bootstrap your team's TeamSynch 
-              Repository; the purpose of that created Repository (your team's TeamSynch Repository) is to bootstrap a given team member's 
+
+              6) LOCAL TEAMSYNCH REPOSITORY: Create the Team Synch Local Repository, populate it, and initialize it; then push all the
+              new artifacts to the Remote TeamSynch Repository.
+
+              NOTE: Once the Local Repository is populated, it will have some similarities
+              with the Public TeamSynch Repository you have cloned and are working with now; but it will also have crucial differences.
+              The purpose of this Public TeamSynch Repository (that you're working with now) is mainly to bootstrap your team's TeamSynch
+              Repository; the purpose of that created Repository (your team's TeamSynch Repository) is to bootstrap a given team member's
               laptop, and then to enable that team member (on that laptop) to perform TeamSynch functions.
 
-              7) FINISH BOOTSTRAPPING THIS LAPTOP: Once you have bootstrapped the remote TeamSynch Repository, then any team member can clone the 
-              repository, bootstrap their laptop, and begin using the TeamSynch functions.  In order to bootstrap the TeamSynch 
-              Repository, this process has partially bootstrapped this laptop.  For your convenience, and also so as not to leave 
-              this laptop in a partial state, the final step will be to bootstrap this laptop with the TeamSynch system.  This means 
+              7) FINISH BOOTSTRAPPING THIS LAPTOP: Once you have bootstrapped the remote TeamSynch Repository, then any team member can clone the
+              repository, bootstrap their laptop, and begin using the TeamSynch functions.  In order to bootstrap the TeamSynch
+              Repository, this process has partially bootstrapped this laptop.  For your convenience, and also so as not to leave
+              this laptop in a partial state, the final step will be to bootstrap this laptop with the TeamSynch system.  This means
               that you do not need to perform a separate step to bootstrap this particular laptop.
               `
             );
@@ -172,17 +172,17 @@ module.exports = function(grunt) {
         function getFolderPathsAndCreateFolders() {
             let useParentDirectory = false;
             let parentDirectoryShouldBeHomeDirectory = false;
-    
+
             showExplanation();
             askQuestionAboutDefaults();
-    
-    
-    
+
+
+
             function askQuestionAboutDefaults() {
                 const rl = getReadline();
 
                 rl.question(
-                    'Do you wish to use the defaults?', 
+                    'Do you wish to use the defaults?',
                     (answer) => {
                         if (answerIsInTheAffirmative(answer)) {
                             useParentDirectory = true;
@@ -198,12 +198,12 @@ module.exports = function(grunt) {
                         askWhetherToUseParentDirectory();
                 })
             }
-        
+
             function askWhetherToUseParentDirectory() {
                 const rl = getReadline();
 
                 rl.question(
-                    'Do you wish to have a Parent Directory?', 
+                    'Do you wish to have a Parent Directory?',
 
                     (answer => {
                         useParentDirectory = answerIsInTheAffirmative(answer);
@@ -215,13 +215,13 @@ module.exports = function(grunt) {
                                 askWhetherParentDirectoryShouldBeHomeDirectory();
                                 return;
                             }
-                            
+
                             askQuestionAboutAdminFolder();
                         }
                     })
                 );
             }
-    
+
             function askWhetherParentDirectoryShouldBeHomeDirectory() {
                 const rl = getReadline();
 
@@ -239,7 +239,7 @@ module.exports = function(grunt) {
                                 return;
                             }
 
-                            askQuestionAboutParentDirectory();                            
+                            askQuestionAboutParentDirectory();
                         }
                     }
                 )
@@ -258,7 +258,7 @@ module.exports = function(grunt) {
                     }
                 )
             }
-    
+
             function askQuestionAboutAdminFolder() {
                 const rl = getReadline();
 
@@ -272,13 +272,13 @@ module.exports = function(grunt) {
                     }
                 )
             }
-    
+
             function askQuestionAboutProjectsFolder() {
                 const rl = getReadline();
 
                 rl.question(
                     'What is the path for the Projects Folder?',
-                    
+
                     (answer) => {
                         projectsPathValue = answer;
                         rl.close();
@@ -286,7 +286,7 @@ module.exports = function(grunt) {
                     }
                 )
             }
-    
+
             function showExplanation() {
                 log(
                   `
@@ -295,56 +295,56 @@ module.exports = function(grunt) {
                   *         2. GET FOLDER PATHS AND CREATE FOLDERS                  *
                   *                                                                 *
                   ******************************************************************
-    
-                  Team Synch requires two folders to exist on a Team Member's laptop: the Admin Folder 
-                  (used for administration of Team Synch) and the Projects Folder (where Projects - 
+
+                  Team Synch requires two folders to exist on a Team Member's laptop: the Admin Folder
+                  (used for administration of Team Synch) and the Projects Folder (where Projects -
                   node.js projects, etc. - will be placed).
-    
-                  Now this process will ask you a series of questions to determine the standard location 
-                  for these folders for your Team.  After it gathers this information, it will crete 
+
+                  Now this process will ask you a series of questions to determine the standard location
+                  for these folders for your Team.  After it gathers this information, it will crete
                   those Folders on your laptop.
-    
-                  The Admin and Project Folder paths can be specified independently of each other, or - 
-                  as is more common and recommended - a Parent Directory can be specified, and the Admin 
+
+                  The Admin and Project Folder paths can be specified independently of each other, or -
+                  as is more common and recommended - a Parent Directory can be specified, and the Admin
                   and Project Folder paths are then specified relative to that Parent Directory.
-    
-                  Additionally, it is common and recommended to specify that the Home Directory (of any 
+
+                  Additionally, it is common and recommended to specify that the Home Directory (of any
                   given Team Laptop) be the Parent Directory.
-    
-                  The first question you will be asked is whether you want to simply go with the default 
-                  (the common and recommend approach) i.e. have the Home Directory of the Team Laptops 
-                  be the Parent Directory, and the Admin and Project Folders be relative to that; **and** to 
-                  specify that the Admin Folder is a Folder 'TeamSynchAdmin' under the Parent Directory (Home 
-                  Directory); **and** to specify that the Projects Folder is a Folder 'Projects' under the Parent 
+
+                  The first question you will be asked is whether you want to simply go with the default
+                  (the common and recommend approach) i.e. have the Home Directory of the Team Laptops
+                  be the Parent Directory, and the Admin and Project Folders be relative to that; **and** to
+                  specify that the Admin Folder is a Folder 'TeamSynchAdmin' under the Parent Directory (Home
+                  Directory); **and** to specify that the Projects Folder is a Folder 'Projects' under the Parent
                   Directory (Home Directory).
-    
+
                   The first question is one of two Yes-No questions in Step 2.  For any Yes-No question, an answer of
-                  'Y', 'y', 'YES', 'Yes', or 'yes' will be considered an answer in the affirmative; and **all other 
+                  'Y', 'y', 'YES', 'Yes', or 'yes' will be considered an answer in the affirmative; and **all other
                   answers** (including just hitting '<Enter>/<Return>' etc.) will be considered an answer in the negative.
-    
-                  If you answer in the affirmative to the first question regarding using defaults, then this process 
-                  will simply set the Team Repository up to use the defaults, and Step 2 will be complete.  If you answer 
-                  in the negative to the first question, then three or four further questions (depending on whether or not 
-                  you indicate to have a Parent Directory) will be asked, and then the Team Repository will be set up 
+
+                  If you answer in the affirmative to the first question regarding using defaults, then this process
+                  will simply set the Team Repository up to use the defaults, and Step 2 will be complete.  If you answer
+                  in the negative to the first question, then three or four further questions (depending on whether or not
+                  you indicate to have a Parent Directory) will be asked, and then the Team Repository will be set up
                   based on your answers.
-    
-                  Finally, take care with your answers regarding the paths of the Admin Folder and the Projects Folder 
-                  (and Parent Folder, if specified and not specified as Home Directory on the target Laptop).  
-                  These values must represent valid paths on the target laptop; if not, this will not be discovered until 
-                  the first time a Laptop Bootstrapping is attempted.  
-                  
-                  Also ensure that the paths you provide will not be interpreted as relative paths to a current directory 
-                  that the process is running in.  (When using a Parent Directory and using Home Directory for the Parent Directory, 
+
+                  Finally, take care with your answers regarding the paths of the Admin Folder and the Projects Folder
+                  (and Parent Folder, if specified and not specified as Home Directory on the target Laptop).
+                  These values must represent valid paths on the target laptop; if not, this will not be discovered until
+                  the first time a Laptop Bootstrapping is attempted.
+
+                  Also ensure that the paths you provide will not be interpreted as relative paths to a current directory
+                  that the process is running in.  (When using a Parent Directory and using Home Directory for the Parent Directory,
                   this situation is avoided altogether, which is why that is standard, recommended, and default).
-                  
-                  So for instance, when specifying any Folder independently of a Home Directory/Parent Directory, a value of 
-                  '/admin' would cause the Laptop Bootstrapper to create a subfolder 'admin' in the folder it's working in, which is not 
-                  wanted.  However, a value like '~/admin' would 'anchor' the path in an absolute path.  Or if you indicate 
-                  to use a Parent Directory that is not the Home Directory, then a path of 'parent' for the Parent Directory 
-                  and 'admin' for the Admin Directory, would cause the Laptop Bootstrapper to create a subfolder 'parent' in 
-                  the folder it's working in, and a subfolder 'admin' in the 'parent' subfolder (i.e. 'parent/admin'), which 
+
+                  So for instance, when specifying any Folder independently of a Home Directory/Parent Directory, a value of
+                  '/admin' would cause the Laptop Bootstrapper to create a subfolder 'admin' in the folder it's working in, which is not
+                  wanted.  However, a value like '~/admin' would 'anchor' the path in an absolute path.  Or if you indicate
+                  to use a Parent Directory that is not the Home Directory, then a path of 'parent' for the Parent Directory
+                  and 'admin' for the Admin Directory, would cause the Laptop Bootstrapper to create a subfolder 'parent' in
+                  the folder it's working in, and a subfolder 'admin' in the 'parent' subfolder (i.e. 'parent/admin'), which
                   is also not wanted.
-                  
+
                   Though the situation is correctible, taking a little care to avoid it altogether is the easiest approach.
                   `
                 );
@@ -363,7 +363,7 @@ module.exports = function(grunt) {
 
                 folderPathsGotten = true;
                 doNext();
-                
+
 
                 function createFolders() {
                     try {
@@ -375,7 +375,7 @@ module.exports = function(grunt) {
                     catch(exception) {
                         log(
                             `
-                            An error was encountered creating the Admin and/or Project Folders Path.  This process 
+                            An error was encountered creating the Admin and/or Project Folders Path.  This process
                             will now stop so you can investigate; you can start the process again later ('npm start').
 
                             error: ${JSON.stringify(exception)}
@@ -425,8 +425,8 @@ module.exports = function(grunt) {
                     const newTsFileText = tsFileText.replace('WORKING_FOLDER_PATH', workingFolderLocation);
 
                     fs.writeFileSync(getTsFilePath(), newTsFileText);
-                    
-                    
+
+
                     function getTsFilePath() {
                         return path.join(__dirname, 'ts');
                     }
@@ -441,14 +441,14 @@ module.exports = function(grunt) {
                 }
 
                 function getPathBasedOnParentDirectoryOrNot(basePath) {
-                    return useParentDirectory 
-                        ? path.join(getParentDirectoryPath(), basePath) 
+                    return useParentDirectory
+                        ? path.join(getParentDirectoryPath(), basePath)
                         : basePath;
                 }
 
                 function getParentDirectoryPath() {
-                    return parentDirectoryShouldBeHomeDirectory 
-                        ? os.homedir() 
+                    return parentDirectoryShouldBeHomeDirectory
+                        ? os.homedir()
                         : parentDirectoryPathValue;
                 }
             }
@@ -467,13 +467,13 @@ module.exports = function(grunt) {
                   *     3. GATHER TEAMSYNCH REPOSITORY INFO AND ADDITIONAL HUBS     *
                   *                                                                 *
                   ******************************************************************
-    
-                  Now we'll gather from you the information about your github account (you need already 
-                  to have created the TeamSynch repository in this hub i.e. a repository named TeamSynch.  If not, you can 
+
+                  Now we'll gather from you the information about your github account (you need already
+                  to have created the TeamSynch repository in this hub i.e. a repository named TeamSynch.  If not, you can
                   go create that now).
 
-                  Later, this process will create a local TeamSynch repository on your laptop, create all necessary artifacts 
-                  and populate the local TeamSynch repository with them, then push your local TeamSynch repository to the 
+                  Later, this process will create a local TeamSynch repository on your laptop, create all necessary artifacts
+                  and populate the local TeamSynch repository with them, then push your local TeamSynch repository to the
                   remote repository.
                   `
                 );
@@ -489,7 +489,7 @@ module.exports = function(grunt) {
                         teamSynchGithubAccountName = answer;
                         teamSynchGithubAccountUrl = `${githubUrl(teamSynchGithubAccountName)}`;
                         teamSynchUrl = `${teamSynchGithubAccountUrl}/TeamSynch`;
-                        rl.close();                        
+                        rl.close();
                         requiredTeamSynchInfoGathered = true;
                         doNext();
                     }
@@ -512,13 +512,13 @@ module.exports = function(grunt) {
 
                             if (teamSynchAdditionalGithubAccountNames.length > 0) {
                                 const rl2 = getReadline();
-        
+
                                 rl2.question(
                                     'You have more than one TeamSynch Hub.  If you want one of the hubs to be the default, enter its name now.  Otherwise enter \'IAMDONE\' to skip.  (When running admin commands against a Team Repository, TeamSynch must know the hub and the repository, and you will designate by [HUB]|[REPO] (pipe-delimited).  However, if one of the hubs is used more often, you can designate it as a default and then for that hub only need to designate [REPOSITORY].): ',
-        
+
                                     answer => {
                                         rl2.close();
-        
+
                                         if (teamSynchAdditionalGithubAccountNames.includes(answer) || answer === teamSynchGithubAccountName) {
                                             teamSynchDefaultHubId = answer;
                                         }
@@ -530,7 +530,7 @@ module.exports = function(grunt) {
 
                                 return;
                             }
-                            
+
                             additionalHubsGathered = true;
                             doNext();
                             return;
@@ -552,8 +552,8 @@ module.exports = function(grunt) {
            showExplanation();
 
             gatherRepositoriesForAnAccount(
-                teamSynchGithubAccountName, 
-                
+                teamSynchGithubAccountName,
+
                 () => {
                     gatherRepositoriesForAdditionalAccounts();
                 }
@@ -568,8 +568,8 @@ module.exports = function(grunt) {
                 }
 
                 gatherRepositoriesForAnAccount(
-                    teamSynchAdditionalGithubAccountNamesClone[teamSynchAdditionalGithubAccountNamesClone.length - 1], 
-                    
+                    teamSynchAdditionalGithubAccountNamesClone[teamSynchAdditionalGithubAccountNamesClone.length - 1],
+
                     () => {
                         teamSynchAdditionalGithubAccountNamesClone.pop();
                         gatherRepositoriesForAdditionalAccounts();
@@ -579,7 +579,7 @@ module.exports = function(grunt) {
 
             function gatherRepositoriesForAnAccount(accountId, onComplete) {
                 const accountRepositories = {
-                    accountId, 
+                    accountId,
                     repositories: []
                 };
 
@@ -622,8 +622,8 @@ module.exports = function(grunt) {
                   *                                                                 *
                   ******************************************************************
 
-                  Now you have an opportunity to enter, for each hub you've identified (including your 
-                  TeamSynch hub), a list of repositories in that hub, that you want to be in the official TeamSynch 
+                  Now you have an opportunity to enter, for each hub you've identified (including your
+                  TeamSynch hub), a list of repositories in that hub, that you want to be in the official TeamSynch
                   repository list.
                   `
                 );
@@ -639,7 +639,7 @@ module.exports = function(grunt) {
 
                 rl.question(
                     'Enter the account name of the first or next Template Repository Hub (note: if your TeamSynch hub is also a Template Repository Hub, enter its account name here again).  If you have no more to enter, type \'IAMDONE\' (all caps): ',
-    
+
                     answer => {
                         if (answer === 'IAMDONE') {
                             rl.close();
@@ -647,13 +647,13 @@ module.exports = function(grunt) {
                             doNext();
                             return;
                         }
-    
+
                         rl.close();
-                        
+
                         if (!templateHubs.includes(answer)) {
                             templateHubs.push(answer);
                         }
-                        
+
                         gatherIt();
                     }
                 );
@@ -667,8 +667,8 @@ module.exports = function(grunt) {
                   *            5. GATHER TEMPLATE REPOSITORY INFORMATION            *
                   *                                                                 *
                   ******************************************************************
-                  
-                  Now you can enter the account names for all Template Repository Hubs (hubs containing Repositories of 
+
+                  Now you can enter the account names for all Template Repository Hubs (hubs containing Repositories of
                   Project Templates, and adhering to the TeamSynch Template Repository standard).
                   `
                 );
@@ -705,7 +705,7 @@ module.exports = function(grunt) {
             function populateTeamSynchFolder() {
                 log('B) Populating TeamSynch Folder');
                 populateFullBootstrapLocation();
-                populateFirstMinimalBootstrapLocation();            
+                populateFirstMinimalBootstrapLocation();
                 populateTeamSynchLocation();
                 populateProjectTemplatesStagingFolder();
 
@@ -716,7 +716,7 @@ module.exports = function(grunt) {
 
                     function copyFile(fileName) {
                         fs.copyFileSync(
-                            path.join('../', fileName), 
+                            path.join('../', fileName),
                             path.join(teamSynchFolderLocation, fileName)
                         );
                     }
@@ -749,7 +749,7 @@ module.exports = function(grunt) {
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(
-                            fileName, 
+                            fileName,
                             targetLocation(targetFileName || fileName)
                         );
                     }
@@ -767,7 +767,7 @@ module.exports = function(grunt) {
                         const currentLaptopBootstrapGruntFileText = fs.readFileSync(
                             laptopBootstrapGruntFilePath, 'utf8'
                         );
-                            
+
                         let newLaptopBootstrapGruntFileText = currentLaptopBootstrapGruntFileText
                             .replace('TEAM_REPOSITORIES', inspect(teamRepositories))
                             .replace('WORKING_FOLDER_PATH', workingFolderLocation)
@@ -791,24 +791,24 @@ module.exports = function(grunt) {
                         const currentAdminGruntFileText = fs.readFileSync(
                             adminGruntFilePath, 'utf8'
                         );
-                            
+
                         let newAdminGruntFileText = currentAdminGruntFileText
                             .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
-                        
+
 
                             if (haveDefaultTeamHub()) {
                                 log('***Has default teamhub');
                                 newAdminGruntFileText = newAdminGruntFileText
                                     .replace('NO_DEFAULT_TEAM_HUB', defaultTeamHub());
                         }
-    
+
                         fs.writeFileSync(
                             adminGruntFilePath, newAdminGruntFileText
                         );
                     }
 
                     function haveDefaultTeamHub() {
-                        return teamSynchAdditionalGithubAccountNames.length === 0 || 
+                        return teamSynchAdditionalGithubAccountNames.length === 0 ||
                             !!teamSynchDefaultHubId;
                     }
 
@@ -865,28 +865,28 @@ module.exports = function(grunt) {
                         }
 
                         cloneRepo(templateHubsClone[templateHubsClone.length - 1]);
-    
+
                         function cloneRepo(accountId) {
                             log(`B4.. Cloning Project Template Repository '${accountId}'`);
-                            
+
                             exec(
-                                `git clone ${githubCloneSource(accountId, 'TeamSynchProjectTemplates')}`, 
-    
+                                `git clone ${githubCloneSource(accountId, 'TeamSynchProjectTemplates')}`,
+
                                 (err, stdout, stderr) => {
                                     if (err) {
                                         log(
                                             `
                                             **********ERROR*********
                                             ${err}
-    
-                                            This process will now terminate so you can investigate and correct.  
+
+                                            This process will now terminate so you can investigate and correct.
                                             When you are ready, clean up and start this process again ('npm start').
                                             `
                                         );
 
                                         return;
                                     }
-    
+
                                     fs.renameSync(
                                         path.join(teamSynchFolderProjectTemplatesStagingLocation, 'TeamSynchProjectTemplates'),
                                         path.join(teamSynchFolderProjectTemplatesStagingLocation, accountId)
@@ -897,12 +897,12 @@ module.exports = function(grunt) {
                                 }
                             );
                         }
-                    }                    
+                    }
                 }
 
                 function populateProjectTemplatesFolder() {
                     const projectTemplateFolderNamesFromStaging = fs.readdirSync(
-                        teamSynchFolderProjectTemplatesStagingLocation, 
+                        teamSynchFolderProjectTemplatesStagingLocation,
                         {encoding: 'utf8', withFileTypes: true}
                     )
                     .filter(de => de.isDirectory())
@@ -910,14 +910,14 @@ module.exports = function(grunt) {
 
                     projectTemplateFolderNamesFromStaging.map(fn => {
                         fs.copy(
-                            path.join(teamSynchFolderProjectTemplatesStagingLocation, fn), 
+                            path.join(teamSynchFolderProjectTemplatesStagingLocation, fn),
                             path.join(teamSynchFolderProjectTemplatesLocation, fn),
                             {filter: src => path.basename(src) !== '.git' && path.basename(src) !== '.gitignore'}
                         )
                         .then(() => log('Copied Project Templates'))
                         .catch(err => log(`******Error: ${err}`));
                     })
-                    
+
                     synchTeamSynchFolder();
                 }
             }
@@ -931,8 +931,8 @@ module.exports = function(grunt) {
                   *                                                                 *
                   ******************************************************************
 
-                  This process is now creating a local TeamSynch repository, populating it with the appropriate 
-                  artifacts, and then synching it to the remote TeamSynch repository you indicated 
+                  This process is now creating a local TeamSynch repository, populating it with the appropriate
+                  artifacts, and then synching it to the remote TeamSynch repository you indicated
                   (${teamSynchGithubAccountUrl}).
 
                   Nothing is required from you for this process.
@@ -945,7 +945,7 @@ module.exports = function(grunt) {
                 const currentDirectory = process.cwd();
                 process.chdir(teamSynchFolderLocation);
                 doGitInit();
-                
+
                 function doGitInit() {
                     log('D1) Doing \'git init\'');
                     exec('git init', (err, stdout, stderr) => {
@@ -1053,7 +1053,7 @@ module.exports = function(grunt) {
                             `
                             ***********ERROR (TERMINATING)***********
                             Encountered an error while attempting to install npm packages in TeamSynch Folder.
-                            This process will now terminate so you can investigate and correct.  When ready, restart 
+                            This process will now terminate so you can investigate and correct.  When ready, restart
                             this process ('npm start').
 
                             Error:
@@ -1085,34 +1085,34 @@ module.exports = function(grunt) {
                 function installNpmPackages() {
                     const currentDirectory = process.cwd();
                     process.chdir(workingFolderLocation);
-    
+
                     exec('npm install', (err) => {
                         if (err) {
                             log(
                                 `
                                 ***********ERROR (TERMINATING)***********
                                 Encountered an error while attempting to install npm packages in TeamSynch Folder.
-                                This process will now terminate so you can investigate and correct.  When ready, restart 
+                                This process will now terminate so you can investigate and correct.  When ready, restart
                                 this process ('npm start').
-    
+
                                 Error:
                                 ${err}
                                 `
                             );
-    
+
                             return;
                         }
                     });
-    
+
                     process.chdir(currentDirectory);
                 }
-    
+
 
                 function setUpTsScript() {
                     const pathToUserLocal = '/usr/local/';
                     if (!fs.existsSync(pathToUserLocal)) fs.mkdirSync(pathToUserLocal);
                     const pathToUserLocalBin = path.join(pathToUserLocal, 'bin');
-                    if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirs(pathToUserLocalBin);
+                    if (!fs.existsSync(pathToUserLocalBin)) fs.mkdirSync(pathToUserLocalBin);
                     const pathToTsInUserLocalBin = path.join(pathToUserLocalBin, 'ts');
 
                     moveTsScriptToBin();
@@ -1157,14 +1157,14 @@ module.exports = function(grunt) {
                   *                                                                 *
                   ******************************************************************
 
-                  When someone is performing the 'normal TeamSynch Setup process', they will not be 
-                  bootstrapping TeamSynch for the Team, as you have just done.  They will be bootstrapping 
-                  their Laptop with the TeamSynch system.  As part of bootstrapping the Team, this process has 
+                  When someone is performing the 'normal TeamSynch Setup process', they will not be
+                  bootstrapping TeamSynch for the Team, as you have just done.  They will be bootstrapping
+                  their Laptop with the TeamSynch system.  As part of bootstrapping the Team, this process has
                   also partially bootstrapped this laptop.
 
                   This process will now finish bootstrapping this laptop.
 
-                  At the end of this step, your laptop will 'look like' it would have looked if you had 
+                  At the end of this step, your laptop will 'look like' it would have looked if you had
                   cloned the TeamSynch Repository (that you created as part of this process), and kicked off that process.
 
                   This step does not require any interaction from you.
@@ -1173,7 +1173,7 @@ module.exports = function(grunt) {
             }
         }
     });
-    
+
     grunt.registerTask('evaluateEnvironment', environmentIsOkay);
 
     function environmentIsOkay() {
@@ -1211,25 +1211,25 @@ module.exports = function(grunt) {
                 All artifacts exist.
                 `
             );
-            
+
             return true;
         }
 
         log(
             `
-            This environment is missing at least one required artifact (see below).  This process will now terminate so 
-            you can investigate and correct; then you can start this process again (simply navigate back here and type 
-            'npm start' or 'grunt' or - if all you wish to do is evaluate the environment again - 'npm run environmentIsOkay' 
+            This environment is missing at least one required artifact (see below).  This process will now terminate so
+            you can investigate and correct; then you can start this process again (simply navigate back here and type
+            'npm start' or 'grunt' or - if all you wish to do is evaluate the environment again - 'npm run environmentIsOkay'
             or 'grunt:environmentIsOkay').
-            
-            
+
+
             Missing artifacts:
             ${listOfMissingArtifacts()}
             `
         );
 
         function allArtifactsExist() {
-            return tsExists && adminGruntFileExists && adminPackageJsonExists && 
+            return tsExists && adminGruntFileExists && adminPackageJsonExists &&
                 laptopBootstrapGruntFileExists && laptopBootstrapReadMeExists;
         }
 
@@ -1251,12 +1251,12 @@ module.exports = function(grunt) {
                 *                 1. EVALUATING ENVIRONMENT                       *
                 *                                                                 *
                 ******************************************************************
-        
-                The first step is to examine your TeamSynch environment to ensure all necessary 
+
+                The first step is to examine your TeamSynch environment to ensure all necessary
                 artifacts are present before proceeding.
-                
-                Usually all necessary artifacts are present; however, if not, then this process will inform 
-                you of the particular missing artifacts, and then terminate so you can correct the situation.  
+
+                Usually all necessary artifacts are present; however, if not, then this process will inform
+                you of the particular missing artifacts, and then terminate so you can correct the situation.
                 After correcting the situation, you can restart this process.
                 `
             );
@@ -1272,8 +1272,8 @@ module.exports = function(grunt) {
     }
 
     function answerIsInTheAffirmative(answer) {
-        return answer === 'Y' || answer === 'y' || 
-            answer === 'YES' || answer === 'Yes' || 
+        return answer === 'Y' || answer === 'y' ||
+            answer === 'YES' || answer === 'Yes' ||
             answer === 'yes';
     }
 
