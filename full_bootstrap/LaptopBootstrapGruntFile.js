@@ -142,9 +142,10 @@ module.exports = function(grunt) {
       log('2B) Copy AdminPackage.json as Package.json');
       copyFile('AdminPackage.json', 'Package.json');
       
+      log('2C) Copy ProjectTemplates contents recursively');
       fs.copy('../ProjectTemplates', projectTemplatesFolderPath)
-      .then(() => log('Copied Project Templates'))
-      .catch(err => log(`******Error: ${err}`));
+        .then(() => log('Copied Project Templates'))
+        .catch(err => log(`******Error: ${err}`));
 
       function copyFile(sourceFile, targetFile) {
         fs.copyFileSync(
