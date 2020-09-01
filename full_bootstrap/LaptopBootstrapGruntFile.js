@@ -11,7 +11,6 @@ module.exports = function(grunt) {
   const workingDirectoryFolderPath = path.join(adminFolderPath, 'Working');
   const projectTemplatesFolderPath = path.join(workingDirectoryFolderPath, 'ProjectTemplates');
 
-  const teamRepositories = TEAM_REPOSITORIES;
 
   const pathToUserLocal = '/usr/local/';
   let pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
@@ -142,7 +141,10 @@ module.exports = function(grunt) {
       copyFile('AdminGruntFile.js', 'Gruntfile.js');
       log('2B) Copy AdminPackage.json as Package.json');
       copyFile('AdminPackage.json', 'Package.json');
-      fs.copy('../ProjectTemplates', projectTemplatesFolderPath);
+      
+      fs.copy('../ProjectTemplates', projectTemplatesFolderPath)
+      .then(() => log('Copied Project Templates'))
+      .catch(err => log(`******Error: ${err}`));
 
       function copyFile(sourceFile, targetFile) {
         fs.copyFileSync(

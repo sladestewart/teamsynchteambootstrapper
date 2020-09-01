@@ -723,7 +723,6 @@ module.exports = function(grunt) {
 
                 function populateFullBootstrapLocation() {
                     log('B1) Populating full_bootstrap');
-                    writeTeamRepositoriesInfoIntoLaptopBootstrapGruntFile();
                     writeTeamRepositoriesInfoIntoAdminGruntFile();
                     log('B2) Placing LaptopBootstrapGruntFile as plain Gruntfile');
                     copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
@@ -755,24 +754,6 @@ module.exports = function(grunt) {
 
                     function targetLocation(fileName) {
                         return path.join(teamSynchFolderFullBootstrapLocation, fileName);
-                    }
-
-                    function writeTeamRepositoriesInfoIntoLaptopBootstrapGruntFile() {
-                        log('B1ai) Writing TeamRepositories info into the LaptopBootstrap grunt file');
-                        const laptopBootstrapGruntFilePath = path.join(
-                            __dirname, 'LaptopBootstrapGruntFile.js'
-                        );
-
-                        const currentLaptopBootstrapGruntFileText = fs.readFileSync(
-                            laptopBootstrapGruntFilePath, 'utf8'
-                        );
-
-                        let newLaptopBootstrapGruntFileText = currentLaptopBootstrapGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
-
-                        fs.writeFileSync(
-                            laptopBootstrapGruntFilePath, newLaptopBootstrapGruntFileText
-                        );
                     }
 
                     function writeTeamRepositoriesInfoIntoAdminGruntFile() {
