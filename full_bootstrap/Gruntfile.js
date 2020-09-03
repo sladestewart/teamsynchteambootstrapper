@@ -501,6 +501,7 @@ module.exports = function(grunt) {
             getNextHubAccountName();
 
             function getNextHubAccountName() {
+                console.log('getNextHubAccountName');
                 const rl = getReadline();
 
                 rl.question(
@@ -508,14 +509,19 @@ module.exports = function(grunt) {
 
                     answer => {
                         if (answer === 'IAMDONE') {
+                            console.log('IAMDONE');
                             rl.close();
 
+                            console.log('LOOKING AT ADDITIONAL HUBS');
                             if (additionalHubIds.length > 0) {
+                                console.log('had additional hubs');
+
                                 additionalHubsGathered = true;
                                 doNext();
 
                                 return;
                             }
+                            console.log('done looking at additional hubs');
 
                             additionalHubsGathered = true;
                             doNext();
@@ -534,6 +540,7 @@ module.exports = function(grunt) {
         }
 
         function gatherAnyTeamRepositories() {
+            console.log('in gatherAnyTeamRepositories');
             additionalHubIdsClone = [...additionalHubIds];
            showExplanation();
 
@@ -564,7 +571,8 @@ module.exports = function(grunt) {
             }
 
             function gatherRepositoriesForAHub(hubId, onComplete) {
-                const hubRepositories = teamRepositories.find(tr => tr.hubId === hubId);
+                console.log('in gatherRepositoriesForAHub');
+                let hubRepositories = teamRepositories.find(tr => tr.hubId === hubId);
 
                 if (!hubRepositories) {
                     hubRepositories = {
@@ -582,7 +590,7 @@ module.exports = function(grunt) {
                     const rl = getReadline();
 
                     rl.question(
-                        `Enter the name of a repository for Account '${accountId}', or 'IAMDONE' (all caps) if you have no more repositories to enter for this account: `,
+                        `Enter the name of a repository for Account '${hubId}', or 'IAMDONE' (all caps) if you have no more repositories to enter for this account: `,
 
                         answer => {
                             if (answer === 'IAMDONE') {
@@ -623,10 +631,12 @@ module.exports = function(grunt) {
         }
 
         function gatherTemplateRepositoryInfo() {
+            console.log('in gatherTemplateRepositoryInfo');
             showExplanation();
             gatherIt();
 
             function gatherIt() {
+                console.log('in gatherIt');
                 const rl = getReadline();
 
                 rl.question(
@@ -703,6 +713,7 @@ module.exports = function(grunt) {
             }
 
             function populateTeamSynchFolder() {
+                console.log('in populateTeamSynchFolder');
                 log('B) Populating TeamSynch Folder');
                 populateFullBootstrapLocation();
                 populateFirstMinimalBootstrapLocation();
@@ -866,6 +877,7 @@ module.exports = function(grunt) {
                 }
 
                 function populateProjectTemplatesFolder() {
+                    console.log('in populateProjectTemplatesFolder');
                     const projectTemplateFolderNamesFromStaging = fs.readdirSync(
                         teamSynchFolderProjectTemplatesStagingLocation,
                         {encoding: 'utf8', withFileTypes: true}
@@ -874,6 +886,7 @@ module.exports = function(grunt) {
                     .map(de => de.name);
 
                     projectTemplateFolderNamesFromStaging.map(fn => {
+                        console.log(`looking at folder ${fn}`);
                         gatherTemplates();
                         copyFolderFromStagingToProjectTemplatesLocation();
 
@@ -886,18 +899,22 @@ module.exports = function(grunt) {
                         }
 
                         function gatherTemplates() {
+                            console.log('in gatherTemplates');
                             const templateNames = fs.readdirSync(
-                                fn,
+                                path.join(teamSynchFolderProjectTemplatesStagingLocation, fn),
                                 {encoding: 'utf8', withFileTypes: true}
                             )
-                            .filter(de => de.isDirectory())
+                            .filter(de => de.isDirectory() && de.name !== '.git')
                             .map(de => de.name);
 
     
                             templateNames.map(tn => {
+                                console.log(`for template hub folder ${fn}, doing template folder ${tn}`);
                                 const hub = templateHubs.find(t => t.hubId === fn);
+                                console.log(`found hub: ${inspect(hub)}`);
 
                                 if (!hub) {
+                                    console.log('hub did not exist, creating it');
                                     hub =                                 {
                                         hubNumber: templateHubs.length + 1,
                                         hubId: fn,
@@ -906,9 +923,10 @@ module.exports = function(grunt) {
     
                                     templateHubs.push(hub);
                                 }
-
+                                
+                                console.log('about to do push of template');
                                 if (!hub.templates.find(t => t.id === tn)) {
-                                    templateHubs[fn].templates.push({number: templateHubs[fn].templates.length + 1, name: tn});
+                                    hub.templates.push({number: hub.templates.length + 1, name: tn});
                                 }
                             });
                         }
