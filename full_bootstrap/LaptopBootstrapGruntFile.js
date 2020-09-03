@@ -13,8 +13,8 @@ module.exports = function(grunt) {
 
 
   const pathToUserLocal = '/usr/local/';
-  let pathToUserLocalBin = ''; path.join(pathToUserLocal, 'bin');
-  let pathToTsInUserLocalBin = ''; path.join(pathToUserLocalBin, 'ts');
+  let pathToUserLocalBin = path.join(pathToUserLocal, 'bin');
+  let pathToTsInUserLocalBin = path.join(pathToUserLocalBin, 'ts');
 
   grunt.registerTask('default', () => {
     let proceed = true;
