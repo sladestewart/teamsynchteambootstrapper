@@ -779,8 +779,8 @@ module.exports = function(grunt) {
                         );
 
                         let newAdminGruntFileText = currentAdminGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories))
-                            .replace('TEAM_HUBS', inspect(teamHubInfo()));
+                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories, false, null))
+                            .replace('TEAM_HUBS', inspect(teamHubInfo(), false, null));
 
 
                         fs.writeFileSync(
@@ -945,7 +945,7 @@ module.exports = function(grunt) {
                     );
 
                     let newAdminGruntFileText = currentAdminGruntFileText
-                        .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs));
+                        .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs, false, null));
 
 
                     fs.writeFileSync(
