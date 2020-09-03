@@ -738,23 +738,21 @@ module.exports = function(grunt) {
                     writeRepositoriesAndHubInfoIntoAdminGruntFile();
                     log('B2) Placing LaptopBootstrapGruntFile as plain Gruntfile');
                     copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
-                    log('B3) Copying AdminGruntFile');
-                    copyFile('AdminGruntFile.js');
-                    log('B4) Copying AdminPackage.json');
+                    log('B3) Copying AdminPackage.json');
                     copyFile('AdminPackage.json');
-                    log('B5) Copying LaptopBootstrap README');
+                    log('B4) Copying LaptopBootstrap README');
                     copyFile('LaptopBootstrapReadme.md', 'README.md');
-                    log('B6) Copying after_minimal_bash script');
+                    log('B5) Copying after_minimal_bash script');
                     copyFile('after_minimal_bash.sh');
-                    log('B7) Copying after_minimal_windows script');
+                    log('B6) Copying after_minimal_windows script');
                     copyFile('after_minimal_windows.sh');
-                    log('B8) Copying full_bash script');
+                    log('B7) Copying full_bash script');
                     copyFile('full_bash.sh');
-                    log('B9) Copying full_windows script');
+                    log('B8) Copying full_windows script');
                     copyFile('full_windows.sh');
-                    log('B10) Copying package.json');
+                    log('B8) Copying package.json');
                     copyFile('package.json');
-                    log('B11) Copying ts script file');
+                    log('B10) Copying ts script file');
                     copyFile('ts');
 
                     function copyFile(fileName, targetFileName) {
@@ -946,6 +944,13 @@ module.exports = function(grunt) {
 
                     let newAdminGruntFileText = currentAdminGruntFileText
                         .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs, false, null));
+
+                    fs.copyFileSync(
+                        adminGruntFilePath,
+                        path.join(teamSynchFolderFullBootstrapLocation, 'AdminGruntFile.js')
+                    );
+
+
 
 
                     fs.writeFileSync(
