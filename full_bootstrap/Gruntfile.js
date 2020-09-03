@@ -901,7 +901,7 @@ module.exports = function(grunt) {
                         function gatherTemplates() {
                             console.log('in gatherTemplates');
                             const templateNames = fs.readdirSync(
-                                path.join(teamSynchFolderProjectTemplatesStagingLocation, fn),
+                                path.join(teamSynchFolderProjectTemplatesStagingLocation, fn, 'ProjectTemplates'),
                                 {encoding: 'utf8', withFileTypes: true}
                             )
                             .filter(de => de.isDirectory() && de.name !== '.git')
