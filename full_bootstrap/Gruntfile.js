@@ -10,7 +10,6 @@ module.exports = function(grunt) {
 
     let teamSynchGithubAccountName = '';
     let teamSynchGithubAccountUrl = '';
-    let teamSynchUrl = '';
 
     let parentDirectoryPathValue = '';
     let adminPathValue = '';
@@ -26,12 +25,15 @@ module.exports = function(grunt) {
     let teamSynchFolderProjectTemplatesLocation = '';
     let teamSynchFolderProjectTemplatesStagingLocation = '';
 
-    const teamSynchAdditionalGithubAccountNames = [];
-    let teamSynchAdditionalGithubAccountNamesClone = null;
+    const additionalHubIds = [];
+    let additionalHubIdsClone = null;
     const teamRepositories = [];
+    const templateHubIds = [];
     const templateHubs = [];
-    let templateHubsClone = null;
-    let teamSynchDefaultHubId = null;
+    let templateHubIdsClone = null;
+    let defaultHubId = null;
+    let defaultTemplateHubId = null;
+    let defaultTemplateRepositoryIds = [];
 
 
     grunt.registerTask('default', function() {
@@ -487,7 +489,6 @@ module.exports = function(grunt) {
                     answer => {
                         teamSynchGithubAccountName = answer;
                         teamSynchGithubAccountUrl = `${githubUrl(teamSynchGithubAccountName)}`;
-                        teamSynchUrl = `${teamSynchGithubAccountUrl}/TeamSynch`;
                         rl.close();
                         requiredTeamSynchInfoGathered = true;
                         doNext();
@@ -509,23 +510,9 @@ module.exports = function(grunt) {
                         if (answer === 'IAMDONE') {
                             rl.close();
 
-                            if (teamSynchAdditionalGithubAccountNames.length > 0) {
-                                const rl2 = getReadline();
-
-                                rl2.question(
-                                    'You have more than one TeamSynch Hub.  If you want one of the hubs to be the default, enter its name now.  Otherwise enter \'IAMDONE\' to skip.  (When running admin commands against a Team Repository, TeamSynch must know the hub and the repository, and you will designate by [HUB]|[REPO] (pipe-delimited).  However, if one of the hubs is used more often, you can designate it as a default and then for that hub only need to designate [REPOSITORY].): ',
-
-                                    answer => {
-                                        rl2.close();
-
-                                        if (teamSynchAdditionalGithubAccountNames.includes(answer) || answer === teamSynchGithubAccountName) {
-                                            teamSynchDefaultHubId = answer;
-                                        }
-
-                                        additionalHubsGathered = true;
-                                        doNext();
-                                    }
-                                );
+                            if (additionalHubIds.length > 0) {
+                                additionalHubsGathered = true;
+                                doNext();
 
                                 return;
                             }
@@ -535,8 +522,8 @@ module.exports = function(grunt) {
                             return;
                         }
 
-                        if (!teamSynchAdditionalGithubAccountNames.includes(answer)) {
-                            teamSynchAdditionalGithubAccountNames.push(answer);
+                        if (!additionalHubIds.includes(answer)) {
+                            additionalHubIds.push(answer);
                         }
 
                         rl.close();
@@ -547,10 +534,10 @@ module.exports = function(grunt) {
         }
 
         function gatherAnyTeamRepositories() {
-            teamSynchAdditionalGithubAccountNamesClone = [...teamSynchAdditionalGithubAccountNames];
+            additionalHubIdsClone = [...additionalHubIds];
            showExplanation();
 
-            gatherRepositoriesForAnAccount(
+            gatherRepositoriesForAHub(
                 teamSynchGithubAccountName,
 
                 () => {
@@ -560,30 +547,33 @@ module.exports = function(grunt) {
 
 
             function gatherRepositoriesForAdditionalAccounts() {
-                if (teamSynchAdditionalGithubAccountNamesClone.length === 0) {
+                if (additionalHubIdsClone.length === 0) {
                     teamRepositoriesGathered = true;
                     doNext();
                     return;
                 }
 
-                gatherRepositoriesForAnAccount(
-                    teamSynchAdditionalGithubAccountNamesClone[teamSynchAdditionalGithubAccountNamesClone.length - 1],
+                gatherRepositoriesForAHub(
+                    additionalHubIdsClone[additionalHubIdsClone.length - 1],
 
                     () => {
-                        teamSynchAdditionalGithubAccountNamesClone.pop();
+                        additionalHubIdsClone.pop();
                         gatherRepositoriesForAdditionalAccounts();
                     }
                 )
             }
 
-            function gatherRepositoriesForAnAccount(accountId, onComplete) {
-                const accountRepositories = {
-                    accountId,
-                    repositories: []
-                };
+            function gatherRepositoriesForAHub(hubId, onComplete) {
+                const hubRepositories = teamRepositories.find(tr => tr.hubId === hubId);
 
-                if (!teamRepositories.find(tr => tr.accountId === accountId)) {
-                    teamRepositories.push(accountRepositories);
+                if (!hubRepositories) {
+                    hubRepositories = {
+                        hubNumber: teamRepositories.length + 1,
+                        hubId,
+                        repositories: []
+                    };
+    
+                    teamRepositories.push(hubRepositories);
                 }
 
                 gatherOneRepository();
@@ -601,8 +591,11 @@ module.exports = function(grunt) {
                                 return;
                             }
 
-                            if (!accountRepositories.repositories.includes(answer)) {
-                                accountRepositories.repositories.push(answer);
+                            if (!hubRepositories.repositories.includes(answer)) {
+                                hubRepositories.repositories.push({
+                                    number: hubRepositories.repositories.length + 1,
+                                    id: answer
+                                });
                             }
 
                             rl.close();
@@ -649,8 +642,16 @@ module.exports = function(grunt) {
 
                         rl.close();
 
-                        if (!templateHubs.includes(answer)) {
-                            templateHubs.push(answer);
+                        if (!templateHubIds.includes(answer)) {
+                            templateHubIds.push(answer);
+                            
+                            templateHubs.push(
+                                {
+                                    hubNumber: templateHubs.length + 1,
+                                    hubId: answer,
+                                    templates: []
+                                }
+                            );
                         }
 
                         gatherIt();
@@ -723,7 +724,7 @@ module.exports = function(grunt) {
 
                 function populateFullBootstrapLocation() {
                     log('B1) Populating full_bootstrap');
-                    writeTeamRepositoriesInfoIntoAdminGruntFile();
+                    writeRepositoriesAndHubInfoIntoAdminGruntFile();
                     log('B2) Placing LaptopBootstrapGruntFile as plain Gruntfile');
                     copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
                     log('B3) Copying AdminGruntFile');
@@ -756,7 +757,7 @@ module.exports = function(grunt) {
                         return path.join(teamSynchFolderFullBootstrapLocation, fileName);
                     }
 
-                    function writeTeamRepositoriesInfoIntoAdminGruntFile() {
+                    function writeRepositoriesAndHubInfoIntoAdminGruntFile() {
                         log('B1aii) Writing TeamRepositories info into the Admin grunt file');
                         const adminGruntFilePath = path.join(
                             __dirname, 'AdminGruntFile.js'
@@ -767,29 +768,18 @@ module.exports = function(grunt) {
                         );
 
                         let newAdminGruntFileText = currentAdminGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories));
+                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories))
+                            .replace('TEAM_HUBS', inspect(teamHubInfo()));
 
-
-                            if (haveDefaultTeamHub()) {
-                                log('***Has default teamhub');
-                                newAdminGruntFileText = newAdminGruntFileText
-                                    .replace('NO_DEFAULT_TEAM_HUB', defaultTeamHub());
-                        }
 
                         fs.writeFileSync(
                             adminGruntFilePath, newAdminGruntFileText
                         );
-                    }
 
-                    function haveDefaultTeamHub() {
-                        return teamSynchAdditionalGithubAccountNames.length === 0 ||
-                            !!teamSynchDefaultHubId;
-                    }
-
-                    function defaultTeamHub() {
-                        if (!!teamSynchDefaultHubId) return teamSynchDefaultHubId;
-                        if (teamSynchAdditionalGithubAccountNames.length === 0) return teamSynchGithubAccountName;
-                        return null;
+                        function teamHubInfo() {
+                            return teamRepositories
+                                .map(tr => {return {number: tr.hubNumber, id: tr.hubId}})
+                        }
                     }
                 }
 
@@ -828,23 +818,24 @@ module.exports = function(grunt) {
                     log('B4) Populating Project Templates Staging Folder');
                     const currentDirectory = process.cwd();
                     process.chdir(teamSynchFolderProjectTemplatesStagingLocation);
-                    templateHubsClone = [...templateHubs];
+                    templateHubIdsClone = [...templateHubIds];
                     cloneRepos();
                     process.chdir(currentDirectory);
 
                     function cloneRepos() {
-                        if (templateHubsClone.length === 0) {
+                        if (templateHubIdsClone.length === 0) {
                             populateProjectTemplatesFolder();
+                            writeTemplateHubsIntoAdminGruntFile();
                             return;
                         }
 
-                        cloneRepo(templateHubsClone[templateHubsClone.length - 1]);
+                        cloneRepo(templateHubIdsClone[templateHubIdsClone.length - 1]);
 
-                        function cloneRepo(accountId) {
-                            log(`B4.. Cloning Project Template Repository '${accountId}'`);
+                        function cloneRepo(hubId) {
+                            log(`B4.. Cloning Project Template Repository '${hubId}'`);
 
                             exec(
-                                `git clone ${githubCloneSource(accountId, 'TeamSynchProjectTemplates')}`,
+                                `git clone ${githubCloneSource(hubId, 'TeamSynchProjectTemplates')}`,
 
                                 (err, stdout, stderr) => {
                                     if (err) {
@@ -863,10 +854,10 @@ module.exports = function(grunt) {
 
                                     fs.renameSync(
                                         path.join(teamSynchFolderProjectTemplatesStagingLocation, 'TeamSynchProjectTemplates'),
-                                        path.join(teamSynchFolderProjectTemplatesStagingLocation, accountId)
+                                        path.join(teamSynchFolderProjectTemplatesStagingLocation, hubId)
                                     );
 
-                                    templateHubsClone.pop();
+                                    templateHubIdsClone.pop();
                                     cloneRepos();
                                 }
                             );
@@ -883,16 +874,65 @@ module.exports = function(grunt) {
                     .map(de => de.name);
 
                     projectTemplateFolderNamesFromStaging.map(fn => {
-                        fs.copy(
-                            path.join(teamSynchFolderProjectTemplatesStagingLocation, fn),
-                            path.join(teamSynchFolderProjectTemplatesLocation, fn),
-                            {filter: src => path.basename(src) !== '.git' && path.basename(src) !== '.gitignore'}
-                        )
-                        .then(() => log('Copied Project Templates'))
-                        .catch(err => log(`******Error: ${err}`));
-                    })
+                        gatherTemplates();
+                        copyFolderFromStagingToProjectTemplatesLocation();
+
+                        function copyFolderFromStagingToProjectTemplatesLocation() {
+                            fs.copySync(
+                                path.join(teamSynchFolderProjectTemplatesStagingLocation, fn),
+                                path.join(teamSynchFolderProjectTemplatesLocation, fn),
+                                {filter: src => path.basename(src) !== '.git' && path.basename(src) !== '.gitignore'}
+                            );
+                        }
+
+                        function gatherTemplates() {
+                            const templateNames = fs.readdirSync(
+                                fn,
+                                {encoding: 'utf8', withFileTypes: true}
+                            )
+                            .filter(de => de.isDirectory())
+                            .map(de => de.name);
+
+    
+                            templateNames.map(tn => {
+                                const hub = templateHubs.find(t => t.hubId === fn);
+
+                                if (!hub) {
+                                    hub =                                 {
+                                        hubNumber: templateHubs.length + 1,
+                                        hubId: fn,
+                                        templates: []
+                                    };
+    
+                                    templateHubs.push(hub);
+                                }
+
+                                if (!hub.templates.find(t => t.id === tn)) {
+                                    templateHubs[fn].templates.push({number: templateHubs[fn].templates.length + 1, name: tn});
+                                }
+                            });
+                        }
+                    });
 
                     synchTeamSynchFolder();
+                }
+
+                function writeTemplateHubsIntoAdminGruntFile() {
+                    const adminGruntFilePath = path.join(
+                        __dirname, 'AdminGruntFile.js'
+                    );
+
+                    const currentAdminGruntFileText = fs.readFileSync(
+                        adminGruntFilePath, 'utf8'
+                    );
+
+                    let newAdminGruntFileText = currentAdminGruntFileText
+                        .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs));
+
+
+                    fs.writeFileSync(
+                        adminGruntFilePath, newAdminGruntFileText
+                    );
                 }
             }
 
@@ -1014,33 +1054,6 @@ module.exports = function(grunt) {
         function finishSettingUpTeamSynch() {
             showExplanation();
             setUpWorkingDirectory();
-            //installNpmPackages();
-
-            function installNpmPackages() {
-                log('7B) Install npm packages in TeamSynch location');
-                const currentDirectory = process.cwd();
-                process.chdir(path.join(adminFolderLocation, 'TeamSynch', 'full_bootstrap'));
-
-                exec('npm install', (err) => {
-                    if (err) {
-                        log(
-                            `
-                            ***********ERROR (TERMINATING)***********
-                            Encountered an error while attempting to install npm packages in TeamSynch Folder.
-                            This process will now terminate so you can investigate and correct.  When ready, restart
-                            this process ('npm start').
-
-                            Error:
-                            ${err}
-                            `
-                        );
-
-                        return;
-                    }
-                });
-
-                process.chdir(currentDirectory);
-            }
 
             function setUpWorkingDirectory() {
                 log('7A) Set up Working Directory');

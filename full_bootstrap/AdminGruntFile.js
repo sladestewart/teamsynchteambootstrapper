@@ -1,9 +1,11 @@
 module.exports = function(grunt) {
     const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
 
-    const teamRepositories = TEAM_REPOSITORIES;
+    const teamHubs = TEAM_HUBS;
 
-    const defaultTeamHub = 'NO_DEFAULT_TEAM_HUB';
+    const teamRepositories = TEAM_REPOSITORIES;
+    
+    const templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES;
 
     grunt.registerTask('default', showHelp);
     grunt.registerTask('help', showHelp);
