@@ -2,13 +2,34 @@ module.exports = function(grunt) {
     const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
 
     const teamHubs = TEAM_HUBS;
+    const defaultTeamHubId = null;
+    const defaultTemplateHubId = null;
 
     const teamRepositories = TEAM_REPOSITORIES;
     
     const templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES;
 
+    const defaultTeamRepositoryIds = null;
+    
+    const defaultTemplateRepositoryIds = null;
+
     grunt.registerTask('default', showHelp);
     grunt.registerTask('help', showHelp);
+
+    grunt.registerTask('templatelist', allOrDefault => {
+        allOrDefault = allOrDefault || 'a';
+
+        if (allOrDefault === 'a') {
+            //TODO: list all
+            return;
+        }
+
+        log(
+            `
+            **********DEFAULT TEMPLATE INFO*******
+            `
+        )
+    });
 
 
     function showHelp() {
@@ -33,6 +54,47 @@ module.exports = function(grunt) {
             GRUNT: 'grunt help' or 'grunt' (it's the default command)
             `
         )
+    }
+
+    function haveDefaultTeamHub() {
+        return teamHubs.length === 1 || defaultTeamHubId !== null;
+    }
+
+    function getDefaultTeamHubId() {
+        if (teamHubs.length === 1) return teamHubs[0].id;
+        return defaultTeamHubId;
+    }
+
+    function defaultTeamHubInfo() {
+        if (!haveDefaultTeamHub()) return null;
+        return teamHubInfo(getDefaultTemplateHubId());
+    }
+
+    function teamHubInfo(hubId) {
+        const hubInfo = teamHubs.find(th => th.id === getDefaultTeamHubId());
+        const repositoriesInfo = teamRepositoriesInfo(hubId);
+
+        return {
+
+        };
+    }
+
+    function teamRepositoriesInfo(hubId) {
+
+    }
+
+    function haveDefaultTemplateHub() {
+        return templateHubsAndRepositories.length === 1 || defaultTemplateHubId !== null;
+    }
+
+    function getDefaultTemplateHubId() {
+        if (templateHubsAndRepositories.length === 1) return templateHubsAndRepositories[0].hubId;
+        return defaultTemplateHubId;
+    }
+
+    function defaultTemplateHubInfo() {
+        if (!haveDefaultTemplateHub()) return null;
+        return templateHubsAndRepositories.find(th => th.hubId === getDefaultTemplateHubId());
     }
 
     function log(toLog) {
