@@ -945,16 +945,13 @@ module.exports = function(grunt) {
                     let newAdminGruntFileText = currentAdminGruntFileText
                         .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs, false, null));
 
+                    fs.writeFileSync(
+                        adminGruntFilePath, newAdminGruntFileText
+                    );
+
                     fs.copyFileSync(
                         adminGruntFilePath,
                         path.join(teamSynchFolderFullBootstrapLocation, 'AdminGruntFile.js')
-                    );
-
-
-
-
-                    fs.writeFileSync(
-                        adminGruntFilePath, newAdminGruntFileText
                     );
                 }
             }
