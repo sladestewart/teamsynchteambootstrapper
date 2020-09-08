@@ -258,6 +258,7 @@ const ignoreMissingDefaults = false;
         );
 
         function setIgnoreMissingDefaultsToTrue() {
+            ignoreMissingDefaults = true;
             
             persistValue(
                 'ignoreMissingDefaults', true
