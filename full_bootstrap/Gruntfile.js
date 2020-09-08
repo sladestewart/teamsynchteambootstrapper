@@ -499,7 +499,6 @@ module.exports = function(grunt) {
             getNextHubAccountName();
 
             function getNextHubAccountName() {
-                console.log('getNextHubAccountName');
                 const rl = getReadline();
 
                 rl.question(
@@ -507,19 +506,15 @@ module.exports = function(grunt) {
 
                     answer => {
                         if (answer === 'IAMDONE') {
-                            console.log('IAMDONE');
                             rl.close();
 
-                            console.log('LOOKING AT ADDITIONAL HUBS');
                             if (additionalHubIds.length > 0) {
-                                console.log('had additional hubs');
 
                                 additionalHubsGathered = true;
                                 doNext();
 
                                 return;
                             }
-                            console.log('done looking at additional hubs');
 
                             additionalHubsGathered = true;
                             doNext();
@@ -538,7 +533,6 @@ module.exports = function(grunt) {
         }
 
         function gatherAnyTeamRepositories() {
-            console.log('in gatherAnyTeamRepositories');
             additionalHubIdsClone = [...additionalHubIds];
            showExplanation();
 
@@ -569,7 +563,6 @@ module.exports = function(grunt) {
             }
 
             function gatherRepositoriesForAHub(hubId, onComplete) {
-                console.log('in gatherRepositoriesForAHub');
                 let hubRepositories = teamRepositories.find(tr => tr.hubId === hubId);
 
                 if (!hubRepositories) {
@@ -629,12 +622,10 @@ module.exports = function(grunt) {
         }
 
         function gatherTemplateRepositoryInfo() {
-            console.log('in gatherTemplateRepositoryInfo');
             showExplanation();
             gatherIt();
 
             function gatherIt() {
-                console.log('in gatherIt');
                 const rl = getReadline();
 
                 rl.question(
@@ -711,7 +702,6 @@ module.exports = function(grunt) {
             }
 
             function populateTeamSynchFolder() {
-                console.log('in populateTeamSynchFolder');
                 log('B) Populating TeamSynch Folder');
                 populateFullBootstrapLocation();
                 populateFirstMinimalBootstrapLocation();
@@ -873,7 +863,6 @@ module.exports = function(grunt) {
                 }
 
                 function populateProjectTemplatesFolder() {
-                    console.log('in populateProjectTemplatesFolder');
                     const projectTemplateFolderNamesFromStaging = fs.readdirSync(
                         teamSynchFolderProjectTemplatesStagingLocation,
                         {encoding: 'utf8', withFileTypes: true}
@@ -882,7 +871,6 @@ module.exports = function(grunt) {
                     .map(de => de.name);
 
                     projectTemplateFolderNamesFromStaging.map(fn => {
-                        console.log(`looking at folder ${fn}`);
                         gatherTemplates();
                         copyFolderFromStagingToProjectTemplatesLocation();
 
@@ -895,7 +883,6 @@ module.exports = function(grunt) {
                         }
 
                         function gatherTemplates() {
-                            console.log('in gatherTemplates');
                             const templateNames = fs.readdirSync(
                                 path.join(teamSynchFolderProjectTemplatesStagingLocation, fn, 'ProjectTemplates'),
                                 {encoding: 'utf8', withFileTypes: true}
@@ -905,12 +892,9 @@ module.exports = function(grunt) {
 
     
                             templateNames.map(tn => {
-                                console.log(`for template hub folder ${fn}, doing template folder ${tn}`);
                                 const hub = templateHubs.find(t => t.hubId === fn);
-                                console.log(`found hub: ${inspect(hub)}`);
 
                                 if (!hub) {
-                                    console.log('hub did not exist, creating it');
                                     hub =                                 {
                                         hubNumber: templateHubs.length + 1,
                                         hubId: fn,
@@ -920,7 +904,6 @@ module.exports = function(grunt) {
                                     templateHubs.push(hub);
                                 }
                                 
-                                console.log('about to do push of template');
                                 if (!hub.templates.find(t => t.id === tn)) {
                                     hub.templates.push({number: hub.templates.length + 1, name: tn});
                                 }

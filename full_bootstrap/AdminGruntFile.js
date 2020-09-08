@@ -210,7 +210,10 @@ const ignoreMissingDefaults = false;
     }
 
     function gatherAnyDefaults(onComplete) {
-        if (ignoreMissingDefaults || !haveMissingDefaults()) return;
+        if (ignoreMissingDefaults || !haveMissingDefaults()) {
+            onComplete();
+            return;
+        };
 
         const rl = getReadline();
 
@@ -255,7 +258,6 @@ const ignoreMissingDefaults = false;
         );
 
         function setIgnoreMissingDefaultsToTrue() {
-            console.log('setIgnoreMissintToTrue');
             
             persistValue(
                 'ignoreMissingDefaults', true
@@ -316,14 +318,12 @@ const ignoreMissingDefaults = false;
                 `,
 
                 answer => {
-                    console.log(`answer: ${answer}`);
                     onComplete({WasGathered: false});
                 }
             )
         }
 
         function gatherDefaultRepositories(onComplete) {
-            console.log('gatherDefaultTeamRepositories');
             onComplete({WasGathered: false});
         }
     }
