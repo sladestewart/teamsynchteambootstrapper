@@ -2,41 +2,41 @@ module.exports = function(grunt) {
     const readline = require('readline');
 
 //BEGIN PROJECTSFOLDERPATH
-const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
+//let projectsFolderPath = 'PROJECTS_FOLDER_PATH';
+let projectsFolderPath = require('./ProjectsFolderPath.js');
 //END PROJECTSFOLDERPATH
 
 //BEGIN TEAMHUBS
-const teamHubs = TEAM_HUBS;
+let teamHubs = TEAM_HUBS;
 //END TEAMHUBS
 
 //BEGIN DEFAULTTEAMHUBID
-const defaultTeamHubId = null;
+let defaultTeamHubId = null;
 //END DEFAULTTEAMHUBID
 
 //BEGIN DEFAULTTEMPLATEHUBID
-const defaultTemplateHubId = null;
+let defaultTemplateHubId = null;
 //END DEFAULTTEMPLATEHUBID
 
 //BEGIN TEAMREPOSITORIES
-const teamRepositories = TEAM_REPOSITORIES;
+let teamRepositories = TEAM_REPOSITORIES;
 //END TEAMREPOSITORIES
     
 //BEGIN TEMPLATEHUBSANDREPOSITORIES
-const templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES
+let templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES
 //END TEMPLATEHUBSANDREPOSITORIES
 
 //BEGIN DEFAULTTEAMREPOSITORYIDS
-const defaultTeamRepositoryIds = null;
+let defaultTeamRepositoryIds = null;
 //END DEFAULTTEAMREPOSITORYIDS
 
 //BEGIN DEFAULTTEMPLATEREPOSITORYIDS
-const defaultTemplateRepositoryIds = null;
+let defaultTemplateRepositoryIds = null;
 //END DEFAULTTEMPLATEREPOSITORYIDS
 
 //BEGIN IGNOREMISSINGDEFAULTS
-const ignoreMissingDefaults = false;
+let ignoreMissingDefaults = false;
 //END IGNOREMISSINGDEFAULTS
-
 
     grunt.registerTask('default', showHelp);
     grunt.registerTask('help', showHelp);
@@ -90,13 +90,13 @@ const ignoreMissingDefaults = false;
         )
     }
 
-    function showTeamHubsInfo(summary) {
+    function showTeamHubsInfo(summary, skipBanner) {
         teamHubs.forEach(th => {
-            showTeamHubInfo(th.id, summary);            
+            showTeamHubInfo(th.id, summary, skipBanner);            
         });
     }
 
-    function showTeamHubInfo(hubId, summary) {
+    function showTeamHubInfo(hubId, summary, skipBanner) {
         const hubInfo = teamHubInfo(hubId);
         
         if (!hubInfo) {
@@ -104,13 +104,13 @@ const ignoreMissingDefaults = false;
             return;
         }
 
-        log(teamHubInfoMessageText(teamHubInfoText()));
+        log(teamHubInfoMessageText(teamHubInfoText(), skipBanner));
         
         function teamHubInfoText() {
             const result = `
                 Number (for convenience, can be used instead of id to select this hub): ${hubInfo.hub.number}  
                 Id: ${hubInfo.hub.id} 
-                IsDefault: ${hubInfo.hub.isDefault}
+                IsDefault: ${hubInfo.hub.IsDefault}
                 ${
                     summary 
                         ? ''
@@ -139,9 +139,9 @@ const ignoreMissingDefaults = false;
             return result;
         }
 
-        function teamHubInfoMessageText(innerText) {
+        function teamHubInfoMessageText(innerText, skipBanner) {
             return `
-            ************TEAM HUB INFO*************
+            ${skipBanner ? '' : '************TEAM HUB INFO*************'}
             ${innerText}
             `;
         }
@@ -164,7 +164,7 @@ const ignoreMissingDefaults = false;
     function teamHubInfo(hubId) {
         const hubInfo = teamHubs.find(th => th.id === hubId);
         if (!hubInfo) return null;
-        hubInfo.isDefault = haveDefaultTeamHub() && getDefaultTeamHubId() === hubInfo.id;
+        hubInfo.IsDefault = haveDefaultTeamHub() && getDefaultTeamHubId() === hubInfo.id;
 
         return {
             hub: hubInfo,
@@ -285,25 +285,27 @@ const ignoreMissingDefaults = false;
 
     function gatherTheDefaults(onComplete) {
         gatherTeamDefaults(
-            result => {
-                if (result.DefaultHubResult.WasGathered) defaultTeamHubId = result.DefaultTeamHubResult.Id;
-                if (result.DefaultRepositoriesResult.WasGathered) defaultTeamRepositoryIds = result.DefaultTeamRepositoriesResult.Repositories;
+            () => {
+                //GATHER TEMPLATE DEFAULTS
                 onComplete();
             }
         );
     }
 
     function gatherTeamDefaults(onComplete) {
-        const result = {};
-
         gatherDefaultTeamHub(
             dthResult => {
-                result.DefaultHubResult = dthResult;
-                
+                if (dthResult.WasGathered) {
+                    defaultTeamHubId = dthResult.HubId;
+                    persistValue('defaultTeamHubId', dthResult.HubId);
+                }
+
+                if (dthResult.Abort) {onComplete(); return;}
+
                 gatherDefaultRepositories(
                     drResult => {
-                        result.DefaultRepositoriesResult = drResult;
-                        onComplete(result);
+                        
+                        onComplete();
                     }
                 )
             }
@@ -311,21 +313,36 @@ const ignoreMissingDefaults = false;
 
         function gatherDefaultTeamHub(onComplete) {
             const rl = getReadline();
-            showTeamHubsInfo(true);
+            log('***********GATHERING DEFAULT TEAM HUB*********');
+            showTeamHubsInfo(true, true);
 
             rl.question(
                 `
-                To designate a Default Team Hub, enter either a Number or ID from the list above; any other answer will result iin skipping this step.
+                To designate a Default Team Hub, enter either a Number or ID from the list above.  To abort the overall process of gathering defaults, type 'ABORT' (all caps). Any other answer will result iin skipping this step but continuing the overall process.
                 `,
 
                 answer => {
-                    onComplete({WasGathered: false});
+                    onComplete({
+                        WasGathered: valueIsHubId(answer),
+                        Abort: answer === 'ABORT',
+                        HubId: hubId(answer)
+                    });
                 }
             )
+
+            function valueIsHubId(valueToAssess) {
+                return !!teamHubs.find(
+                    th => th.number === parseInt(valueToAssess, 10) || th.id === valueToAssess
+                );
+            }
+
+            function hubId(valueToAssess) {
+                return teamHubs.find(th => th.number === parseInt(valueToAssess, 10) || th.id === valueToAssess).id;
+            }
         }
 
         function gatherDefaultRepositories(onComplete) {
-            onComplete({WasGathered: false});
+            onComplete({WasGathered: false, RepositoryId: ''});
         }
     }
 
@@ -373,12 +390,14 @@ const ignoreMissingDefaults = false;
             gruntFileText.indexOf(`//END ${delimiterName}`)
         );
 
-        const variableValueStatement = typeof newValue === 'string' ? "'" + newValue + "'" : newValue + ';';
-        const variableAssignmentStatement = variableName + ' = ' + variableValueStatement;
+        const variableValueStatement = typeof newValue === 'string' ? "'" + newValue + "'" : newValue;
+        const variableAssignmentStatement = 'let ' + variableName + ' = ' + variableValueStatement + ';';
 
         const newGruntFileText = firstHalfOfGruntFileText + eol + 
             '//BEGIN ' + delimiterName + eol + 
             variableAssignmentStatement + eol + 
             secondHalfOfGruntFileText;
+
+        fs.writeFileSync('./Gruntfile.js', newGruntFileText);
     }
 };
