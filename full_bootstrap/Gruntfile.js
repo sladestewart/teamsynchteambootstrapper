@@ -402,6 +402,11 @@ module.exports = function(grunt) {
                 }
 
                 function setUpAdminGruntFile() {
+                    fs.writeFileSync(
+                        './ProjectsFolderPath.js', 
+
+                        `module.export = '${projectsFolderLocation}';`
+                    )
                     const adminGruntFileText = fs.readFileSync(
                         getAdminGruntFilePath(), 'utf8'
                     );
