@@ -141,8 +141,9 @@ module.exports = function(grunt) {
       copyFile('AdminGruntFile.js', 'Gruntfile.js');
       log('2B) Copy AdminPackage.json as Package.json');
       copyFile('AdminPackage.json', 'Package.json');
-      
-      log('2C) Copy ProjectTemplates contents recursively');
+      log('2C) Copy ProjectsFolderPath.js');
+      copyFile('ProjectsFolderPath.js');
+      log('2D) Copy ProjectTemplates contents recursively');
       fs.copy('../ProjectTemplates', projectTemplatesFolderPath)
         .then(() => log('Copied Project Templates'))
         .catch(err => log(`******Error: ${err}`));
