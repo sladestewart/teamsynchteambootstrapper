@@ -46,8 +46,6 @@ module.exports = function(grunt) {
         let teamSynchRepoPopulatedAndSynched = false;
         let laptopBootstrapped = false;
 
-        let exitEarly = false;
-
 
 
         showExplanation();
