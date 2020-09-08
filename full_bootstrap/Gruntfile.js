@@ -747,6 +747,8 @@ module.exports = function(grunt) {
                     copyFile('package.json');
                     log('B10) Copying ts script file');
                     copyFile('ts');
+                    log('B11) Copying ProjectsFolderPath.js');
+                    copyFile('ProjectsFolderPath.js');
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(
