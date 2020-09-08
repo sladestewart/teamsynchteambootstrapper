@@ -17,21 +17,13 @@ const defaultTeamHubId = null;
 const defaultTemplateHubId = null;
 //END DEFAULTTEMPLATEHUBID
 
-    const teamRepositories = [
-  {
-    hubNumber: 1,
-    hubId: 'sladestewart',
-    repositories: [ { number: 1, id: 'sladestewartdotcom' } ]
-  }
-];
+//BEGIN TEAMREPOSITORIES
+const teamRepositories = TEAM_REPOSITORIES;
+//END TEAMREPOSITORIES
     
-    const templateHubsAndRepositories = [
-  {
-    hubNumber: 1,
-    hubId: 'sladestewart',
-    templates: [ { number: 1, name: 'React_Spa_AllClient_Gulp_Jest' } ]
-  }
-];
+//BEGIN TEMPLATEHUBSANDREPOSITORIES
+const templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES
+//END TEMPLATEHUBSANDREPOSITORIES
 
 //BEGIN DEFAULTTEAMREPOSITORYIDS
 const defaultTeamRepositoryIds = null;
@@ -380,7 +372,7 @@ const ignoreMissingDefaults = false;
             gruntFileText.indexOf(`//END ${delimiterName}`)
         );
 
-        const variableValueStatement = typeof newValue === 'string' ? "'" + newValue + "'" : newValue;
+        const variableValueStatement = typeof newValue === 'string' ? "'" + newValue + "'" : newValue + ';';
         const variableAssignmentStatement = variableName + ' = ' + variableValueStatement;
 
         const newGruntFileText = firstHalfOfGruntFileText + eol + 
