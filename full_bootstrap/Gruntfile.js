@@ -405,7 +405,7 @@ module.exports = function(grunt) {
                     fs.writeFileSync(
                         './ProjectsFolderPath.js', 
 
-                        `module.export = '${projectsFolderLocation}';`
+                        `module.exports = '${projectsFolderLocation}';`
                     )
                     const adminGruntFileText = fs.readFileSync(
                         getAdminGruntFilePath(), 'utf8'
