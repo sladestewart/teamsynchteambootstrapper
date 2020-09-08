@@ -1,11 +1,15 @@
 module.exports = function(grunt) {
     const readline = require('readline');
 
-    const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
+//BEGIN PROJECTSFOLDERPATH
+const projectsFolderPath = 'PROJECTS_FOLDER_PATH';
+//END PROJECTSFOLDERPATH
 
-    const teamHubs = TEAM_HUBS;
+//BEGIN TEAMHUBS
+const teamHubs = TEAM_HUBS;
+//END TEAMHUBS
 
-    //BEGIN DEFAULTTEAMHUBID
+//BEGIN DEFAULTTEAMHUBID
 const defaultTeamHubId = null;
 //END DEFAULTTEAMHUBID
 
