@@ -42,6 +42,7 @@ module.exports = function(grunt) {
         let templateRepositoryInfoGathered = false;
         let teamSynchRepoPopulatedAndSynched = false;
         let laptopBootstrapped = false;
+        
 
 
 
@@ -404,19 +405,6 @@ module.exports = function(grunt) {
 
                         `module.exports = '${projectsFolderLocation}';`
                     )
-                    const adminGruntFileText = fs.readFileSync(
-                        getAdminGruntFilePath(), 'utf8'
-                    );
-
-                    const newAdminGruntFileText = adminGruntFileText
-                        .replace('PROJECTS_FOLDER_PATH', projectsFolderLocation);
-
-
-                    fs.writeFileSync(getAdminGruntFilePath(), newAdminGruntFileText);
-
-                    function getAdminGruntFilePath() {
-                        return path.join(__dirname, 'AdminGruntFile.js');
-                    }
                 }
 
                 function setUpTs() {
@@ -760,6 +748,8 @@ module.exports = function(grunt) {
                     copyFile('TeamRepositories.js');
                     log('B18) Copying TemplateHubsAndRepositories.js');
                     copyFile('TemplateHubsAndRepositories.js');
+                    log('B19) Copying TeamHubs.js');
+                    copyFile('TeamHubs.js');
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(
@@ -1087,6 +1077,8 @@ module.exports = function(grunt) {
                 setUpTsScript();
                 log('7A5) Installing npm packages in Working Folder');
                 installNpmPackages();
+                laptopBootstrapped = true;
+                doNext();
 
                 function installNpmPackages() {
                     const currentDirectory = process.cwd();
