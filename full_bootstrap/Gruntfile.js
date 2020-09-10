@@ -819,8 +819,8 @@ module.exports = function(grunt) {
 
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
-                            populateProjectTemplatesFolder();
-                            writeTemplateHubsForAdminGruntFile();
+                            populateProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable();
+                            writeTemplateHubsAndRepositoriesForAdminGruntFile();
                             return;
                         }
 
@@ -860,7 +860,7 @@ module.exports = function(grunt) {
                     }
                 }
 
-                function populateProjectTemplatesFolder() {
+                function populateProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable() {
                     const projectTemplateFolderNamesFromStaging = fs.readdirSync(
                         teamSynchFolderProjectTemplatesStagingLocation,
                         {encoding: 'utf8', withFileTypes: true}
@@ -912,7 +912,7 @@ module.exports = function(grunt) {
                     synchTeamSynchFolder();
                 }
 
-                function writeTemplateHubsForAdminGruntFile() {
+                function writeTemplateHubsAndRepositoriesForAdminGruntFile() {
                     fs.writeFileSync(
                         './TemplateHubsAndRepositories.js', inspect(templateHubs, false, null)
                     );
