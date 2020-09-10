@@ -746,6 +746,20 @@ module.exports = function(grunt) {
                     copyFile('ts');
                     log('B11) Copying ProjectsFolderPath.js');
                     copyFile('ProjectsFolderPath.js');
+                    log('B12) Copying DefaultTeamHubId.js');
+                    copyFile('DefaultTeamHubId.js');
+                    log('B13) Copying DefaultTeamRepositoryIds.js');
+                    copyFile('DefaultTeamRepositoryIds.js');
+                    log('B14) Copying DefaultTemplateHubId.js');
+                    copyFile('DefaultTemplateHubId.js');
+                    log('B15) Copying DefaultTemplateRepositoryIds.js');
+                    copyFile('DefaultTemplateRepositoryIds.js');
+                    log('B16) Copying IgnoreMissingDefaults.js');
+                    copyFile('IgnoreMissingDefaults.js');
+                    log('B17) Copying TeamRepositories.js');
+                    copyFile('TeamRepositories.js');
+                    log('B18) Copying TemplateHubsAndRepositories.js');
+                    copyFile('TemplateHubsAndRepositories.js');
 
                     function copyFile(fileName, targetFileName) {
                         fs.copyFileSync(

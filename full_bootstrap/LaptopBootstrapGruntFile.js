@@ -143,10 +143,28 @@ module.exports = function(grunt) {
       copyFile('AdminPackage.json', 'Package.json');
       log('2C) Copy ProjectsFolderPath.js');
       copyFile('ProjectsFolderPath.js');
+
       log('2D) Copy ProjectTemplates contents recursively');
       fs.copy('../ProjectTemplates', projectTemplatesFolderPath)
         .then(() => log('Copied Project Templates'))
         .catch(err => log(`******Error: ${err}`));
+
+      log('2E) Copy DefaultTeamHubId.js');
+      copyFile('DefaultTeamHubId.js');
+      log('2F) Copy DefaultTeamRepositoryIds.js');
+      copyFile('DefaultTeamRepositoryIds.js');
+      log('2G) Copy DefaultTemplateHubId.js');
+      copyFile('DefaultTemplateHubId.js');
+      log('2H) Copy DefaultTemplateRepositoryIds.js');
+      copyFile('DefaultTemplateRepositoryIds.js');
+      log('2I) Copy IgnoreMissingDefaults.js');
+      copyFile('IgnoreMissingDefaults.js');
+      log('2J) Copy TeamHubs.js');
+      copyFile('TeamHubs.js');
+      log('2K) Copy TeamRepositories.js');
+      copyFile('TeamRepositories.js');
+      log('2L) Copy TemplateHubsAndRepositories.js');
+      copyFile('TemplateHubsAndRepositories.js');
 
       function copyFile(sourceFile, targetFile) {
         fs.copyFileSync(
