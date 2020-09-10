@@ -748,8 +748,6 @@ module.exports = function(grunt) {
                     copyFile('IgnoreMissingDefaults.js');
                     log('B17) Copying TeamRepositories.js');
                     copyFile('TeamRepositories.js');
-                    log('B18) Copying TemplateHubsAndRepositories.js');
-                    copyFile('TemplateHubsAndRepositories.js');
                     log('B19) Copying TeamHubs.js');
                     copyFile('TeamHubs.js');
 
@@ -817,6 +815,8 @@ module.exports = function(grunt) {
                     cloneRepos();
                     process.chdir(currentDirectory);
                     writeTemplateHubsAndRepositoriesForAdminGruntFile();
+                    log('B18) Copying TemplateHubsAndRepositories.js');
+                    copyFile('TemplateHubsAndRepositories.js');
 
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
@@ -914,7 +914,7 @@ module.exports = function(grunt) {
 
                 function writeTemplateHubsAndRepositoriesForAdminGruntFile() {
                     fs.writeFileSync(
-                        './TemplateHubsAndRepositories.js', inspect(templateHubs, false, null)
+                        './TemplateHubsAndRepositories.js', `module.exports = ${inspect(templateHubs, false, null)};`
                     );
                 }
             }
