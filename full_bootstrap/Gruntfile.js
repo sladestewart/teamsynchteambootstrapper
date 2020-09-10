@@ -766,10 +766,10 @@ module.exports = function(grunt) {
 
                     function writeRepositoriesAndHubInfoForAdminGruntFile() {
                         log('B1aii) Writing TeamRepositories info for the Admin grunt file');
-                        fs.writeFileSync('./TeamRepositories.js', `module.exports = ${inspect(teamRepositories, false, null)}`);
+                        fs.writeFileSync('./TeamRepositories.js', `module.exports = ${inspect(teamRepositories, false, null)};`);
 
                         log('B1aiii) Writing TeamHubs info for the Admin grunt file');
-                        fs.writeFileSync('./TeamHubs.js', `module.exports = ${inspect(teamHubInfo(), false, null)}`);
+                        fs.writeFileSync('./TeamHubs.js', `module.exports = ${inspect(teamHubInfo(), false, null)};`);
 
                         function teamHubInfo() {
                             return teamRepositories
@@ -914,7 +914,7 @@ module.exports = function(grunt) {
 
                 function writeTemplateHubsForAdminGruntFile() {
                     fs.writeFileSync(
-                        './TemplateHubs.js', inspect(templateHubs, false, null)
+                        './TemplateHubsAndRepositories.js', inspect(templateHubs, false, null)
                     );
                 }
             }
