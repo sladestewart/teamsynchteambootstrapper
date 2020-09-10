@@ -749,7 +749,7 @@ module.exports = function(grunt) {
                     log('B17) Copying TeamRepositories.js');
                     copyFile('TeamRepositories.js');
                     log('B18) Copying TemplateHubsAndRepositories.js');
-                    copyFile('TemplateHubsAndRepositories.js');
+                    //copyFile('TemplateHubsAndRepositories.js');
                     log('B19) Copying TeamHubs.js');
                     copyFile('TeamHubs.js');
 
@@ -1066,8 +1066,6 @@ module.exports = function(grunt) {
                 copyFile('TeamHubs.js');
                 log('7A5h) Copying TeamRepositories.js');
                 copyFile('TeamRepositories.js');
-                log('7A5i) Copying TemplateHubsAndRepositories.js');
-                copyFile('TemplateHubsAndRepositories.js');
                 log('7A6) Installing npm packages in Working Folder');
                 installNpmPackages();
                 laptopBootstrapped = true;
