@@ -816,11 +816,11 @@ module.exports = function(grunt) {
                     templateHubIdsClone = [...templateHubIds];
                     cloneRepos();
                     process.chdir(currentDirectory);
+                    writeTemplateHubsAndRepositoriesForAdminGruntFile();
 
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
                             populateProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable();
-                            writeTemplateHubsAndRepositoriesForAdminGruntFile();
                             return;
                         }
 
