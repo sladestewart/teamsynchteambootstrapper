@@ -713,7 +713,9 @@ module.exports = function(grunt) {
 
                 function populateFullBootstrapLocation() {
                     log('B1) Populating full_bootstrap');
-                    writeRepositoriesAndHubInfoIntoAdminGruntFile();
+                    writeRepositoriesAndHubInfoForAdminGruntFile();
+                    log('B1b) Copying AdminGruntFile');
+                    copyFile('AdminGruntFile.js');
                     log('B2) Placing LaptopBootstrapGruntFile as plain Gruntfile');
                     copyFile('LaptopBootstrapGruntFile.js', 'Gruntfile.js')
                     log('B3) Copying AdminPackage.json');
@@ -762,24 +764,12 @@ module.exports = function(grunt) {
                         return path.join(teamSynchFolderFullBootstrapLocation, fileName);
                     }
 
-                    function writeRepositoriesAndHubInfoIntoAdminGruntFile() {
-                        log('B1aii) Writing TeamRepositories info into the Admin grunt file');
-                        const adminGruntFilePath = path.join(
-                            __dirname, 'AdminGruntFile.js'
-                        );
+                    function writeRepositoriesAndHubInfoForAdminGruntFile() {
+                        log('B1aii) Writing TeamRepositories info for the Admin grunt file');
+                        fs.writeFileSync('./TeamRepositories.js', `module.exports = ${inspect(teamRepositories, false, null)}`);
 
-                        const currentAdminGruntFileText = fs.readFileSync(
-                            adminGruntFilePath, 'utf8'
-                        );
-
-                        let newAdminGruntFileText = currentAdminGruntFileText
-                            .replace('TEAM_REPOSITORIES', inspect(teamRepositories, false, null))
-                            .replace('TEAM_HUBS', inspect(teamHubInfo(), false, null));
-
-
-                        fs.writeFileSync(
-                            adminGruntFilePath, newAdminGruntFileText
-                        );
+                        log('B1aiii) Writing TeamHubs info for the Admin grunt file');
+                        fs.writeFileSync('./TeamHubs.js', `module.exports = ${inspect(teamHubInfo(), false, null)}`);
 
                         function teamHubInfo() {
                             return teamRepositories
@@ -830,7 +820,7 @@ module.exports = function(grunt) {
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
                             populateProjectTemplatesFolder();
-                            writeTemplateHubsIntoAdminGruntFile();
+                            writeTemplateHubsForAdminGruntFile();
                             return;
                         }
 
@@ -922,25 +912,9 @@ module.exports = function(grunt) {
                     synchTeamSynchFolder();
                 }
 
-                function writeTemplateHubsIntoAdminGruntFile() {
-                    const adminGruntFilePath = path.join(
-                        __dirname, 'AdminGruntFile.js'
-                    );
-
-                    const currentAdminGruntFileText = fs.readFileSync(
-                        adminGruntFilePath, 'utf8'
-                    );
-
-                    let newAdminGruntFileText = currentAdminGruntFileText
-                        .replace('TEMPLATE_HUBS_AND_REPOSITORIES', inspect(templateHubs, false, null));
-
+                function writeTemplateHubsForAdminGruntFile() {
                     fs.writeFileSync(
-                        adminGruntFilePath, newAdminGruntFileText
-                    );
-
-                    fs.copyFileSync(
-                        adminGruntFilePath,
-                        path.join(teamSynchFolderFullBootstrapLocation, 'AdminGruntFile.js')
+                        './TemplateHubs.js', inspect(templateHubs, false, null)
                     );
                 }
             }
@@ -1075,7 +1049,26 @@ module.exports = function(grunt) {
                 copyFile('AdminPackage.json', 'package.json');
                 log('7A4) Setting up ts script');
                 setUpTsScript();
-                log('7A5) Installing npm packages in Working Folder');
+                log('7A5) Copying \'require\'d\' files');
+                log('7A5a) Copying  DefaultTeamHubId.js');
+                copyFile('DefaultTeamHubId.js');
+                log('7A5b) Copying DefaultTeamRepositoryIds.js');
+                copyFile('DefaultTeamRepositoryIds.js');
+                log('7A5c) Copying DefaultTemplateHubId.js');
+                copyFile('DefaultTemplateHubId.js');
+                log('7A5d) Copying DefaultTemplateRepositoryIds.js');
+                copyFile('DefaultTemplateRepositoryIds.js');
+                log('7A5e) Copying IgnoreMissingDefaults.js');
+                copyFile('IgnoreMissingDefaults.js');
+                log('7A5f) Copying ProjectsFolderPath.js');
+                copyFile('ProjectsFolderPath.js');
+                log('7A5g) Copying TeamHubs.js');
+                copyFile('TeamHubs.js');
+                log('7A5h) Copying TeamRepositories.js');
+                copyFile('TeamRepositories.js');
+                log('7A5i) Copying TemplateHubsAndRepositories.js');
+                copyFile('TemplateHubsAndRepositories.js');
+                log('7A6) Installing npm packages in Working Folder');
                 installNpmPackages();
                 laptopBootstrapped = true;
                 doNext();
