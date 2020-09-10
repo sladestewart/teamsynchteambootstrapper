@@ -818,6 +818,17 @@ module.exports = function(grunt) {
                     log('B18) Copying TemplateHubsAndRepositories.js');
                     copyFile('TemplateHubsAndRepositories.js');
 
+                    function copyFile(fileName, targetFileName) {
+                        fs.copyFileSync(
+                            fileName,
+                            targetLocation(targetFileName || fileName)
+                        );
+                    }
+
+                    function targetLocation(fileName) {
+                        return path.join(teamSynchFolderFullBootstrapLocation, fileName);
+                    }
+
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
                             populateProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable();
