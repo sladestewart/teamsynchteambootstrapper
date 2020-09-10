@@ -31,9 +31,6 @@ module.exports = function(grunt) {
     const templateHubIds = [];
     const templateHubs = [];
     let templateHubIdsClone = null;
-    let defaultHubId = null;
-    let defaultTemplateHubId = null;
-    let defaultTemplateRepositoryIds = [];
 
 
     grunt.registerTask('default', function() {
