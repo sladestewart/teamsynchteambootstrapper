@@ -1,42 +1,18 @@
+const { file } = require('grunt');
+
 module.exports = function(grunt) {
     const readline = require('readline');
+    const fs = require('fs');
 
-//BEGIN PROJECTSFOLDERPATH
-//let projectsFolderPath = 'PROJECTS_FOLDER_PATH';
-let projectsFolderPath = require('./ProjectsFolderPath.js');
-//END PROJECTSFOLDERPATH
-
-//BEGIN TEAMHUBS
-let teamHubs = TEAM_HUBS;
-//END TEAMHUBS
-
-//BEGIN DEFAULTTEAMHUBID
-let defaultTeamHubId = null;
-//END DEFAULTTEAMHUBID
-
-//BEGIN DEFAULTTEMPLATEHUBID
-let defaultTemplateHubId = null;
-//END DEFAULTTEMPLATEHUBID
-
-//BEGIN TEAMREPOSITORIES
-let teamRepositories = TEAM_REPOSITORIES;
-//END TEAMREPOSITORIES
-    
-//BEGIN TEMPLATEHUBSANDREPOSITORIES
-let templateHubsAndRepositories = TEMPLATE_HUBS_AND_REPOSITORIES
-//END TEMPLATEHUBSANDREPOSITORIES
-
-//BEGIN DEFAULTTEAMREPOSITORYIDS
-let defaultTeamRepositoryIds = null;
-//END DEFAULTTEAMREPOSITORYIDS
-
-//BEGIN DEFAULTTEMPLATEREPOSITORYIDS
-let defaultTemplateRepositoryIds = null;
-//END DEFAULTTEMPLATEREPOSITORYIDS
-
-//BEGIN IGNOREMISSINGDEFAULTS
-let ignoreMissingDefaults = false;
-//END IGNOREMISSINGDEFAULTS
+    let projectsFolderPath = require('./ProjectsFolderPath.js');
+    let teamHubs = require('./TeamHubs.js');
+    let defaultTeamHubId = require('./DefaultTeamHubId.js');
+    let defaultTemplateHubId = require('./DefaultTemplateHubId.js');
+    let teamRepositories = requir('./TeamRepositories.js');
+    let templateHubsAndRepositories = require('./TemplateHubsAndRepositories.js');
+    let defaultTeamRepositoryIds = require('./DefaultTeamRepositoryIds.js');
+    let defaultTemplateRepositoryIds = require('./DefaultTemplateRepositoryIds.js');
+    let ignoreMissingDefaults = require('./IgnoreMissingDefaults.js');
 
     grunt.registerTask('default', showHelp);
     grunt.registerTask('help', showHelp);
@@ -261,7 +237,7 @@ let ignoreMissingDefaults = false;
             ignoreMissingDefaults = true;
             
             persistValue(
-                'ignoreMissingDefaults', true
+                'IgnoreMissingDefaults', true
             );
         }
 
@@ -297,14 +273,14 @@ let ignoreMissingDefaults = false;
             dthResult => {
                 if (dthResult.WasGathered) {
                     defaultTeamHubId = dthResult.HubId;
-                    persistValue('defaultTeamHubId', dthResult.HubId);
+                    persistValue('DefaultTeamHubId', dthResult.HubId);
                 }
 
                 if (dthResult.Abort) {onComplete(); return;}
 
                 gatherDefaultRepositories(
-                    drResult => {
-                        
+                    dhrResult => {
+                        if (dhrResult.WasGathered) teamRepositories = dhrResult.Repositories;
                         onComplete();
                     }
                 )
@@ -342,7 +318,70 @@ let ignoreMissingDefaults = false;
         }
 
         function gatherDefaultRepositories(onComplete) {
-            onComplete({WasGathered: false, RepositoryId: ''});
+            const teamRepositoriesClone = [...teamRepositories];
+            const newTeamRepositories = [];
+
+            gatherThem();
+
+            function gatherThem() {
+                if (teamRepositoriesClone.length === 0) {
+                    onComplete({WasGathered: true, Repositories: newTeamRepositories});
+                    return;
+                }
+
+                const rl = getReadline();
+
+                log(
+                    `
+                    This process will now gather the default Repository for each Team Hub.  For each, the process 
+                    will identify the Team Hub and list its Repositories.  You can choose a default from the list 
+                    (by number or ID).  If you enter 'EXIT' (all caps), the process will exit, saving any answers 
+                    you have provided up to that point.  If you enter 'ABORT' (all caps), the process will abort 
+                    and exit, not saving any answers.  If you enter any other value (than a valid number/ID, 'EXIT', 
+                    or 'ABORT'), the process will skip the Team Hub you're on, and move to the next.  `
+                );
+
+
+
+                function gatherADefaultRepository() {
+                    const rl = getReadline();
+                    const currentTeamHub = teamHubsClone.pop();
+
+                    showTeamHubInfo(
+                        currentTeamHub, false, true
+                    );
+
+                    rl.question(
+                        `By number or ID, designate the Repository from the list above, which will be the default for Team Hub '${currentTeamHub.id}' ('<ENTER>' to skip this Hub, 'ABORT' to abort and lose entriesm 'EXIT' to exit but save any entries).  `,
+
+                        answer => {
+                            if (answer === 'ABORT') {
+                                rl.close();
+                                onComplete({WasGathered: false, Result: null});
+                                return;
+                            }
+
+                            if (answer === 'EXIT') {
+                                rl.close();
+                                onComplete({WasGathered: true, Result: newTeamRepositories});
+                                return;
+                            }
+
+                            
+
+                            rl.close();
+                            newTeamRepositories.push()
+                        }
+                    )
+                }
+
+                function valueIsTeamRepositoryId(hubId, repositoryId) {
+
+                }
+            }
+
+
+
         }
     }
 
@@ -380,24 +419,11 @@ let ignoreMissingDefaults = false;
         });
     }
 
-    function persistValue(variableName, newValue, delimiterName) {
-        const eol = require('os').EOL;
-        delimiterName = delimiterName || variableName.toUpperCase();
+    function persistValue(fileName, newValue) {
+        const newValueText = typeof newValue === 'string' ? "'" + newValue + "'" : newValue;
 
-        const gruntFileText = fs.readFileSync('./Gruntfile.js', {encoding: 'utf8'});
-        const firstHalfOfGruntFileText = gruntFileText.substring(0, gruntFileText.indexOf(`//BEGIN ${delimiterName}`));
-        const secondHalfOfGruntFileText = gruntFileText.substring(
-            gruntFileText.indexOf(`//END ${delimiterName}`)
+        fs.writeFileSync(
+            `./${fileName}.js`, `module.exports = ${newValueText};`
         );
-
-        const variableValueStatement = typeof newValue === 'string' ? "'" + newValue + "'" : newValue;
-        const variableAssignmentStatement = 'let ' + variableName + ' = ' + variableValueStatement + ';';
-
-        const newGruntFileText = firstHalfOfGruntFileText + eol + 
-            '//BEGIN ' + delimiterName + eol + 
-            variableAssignmentStatement + eol + 
-            secondHalfOfGruntFileText;
-
-        fs.writeFileSync('./Gruntfile.js', newGruntFileText);
     }
 };
