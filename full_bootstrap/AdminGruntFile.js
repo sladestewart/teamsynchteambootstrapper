@@ -280,12 +280,22 @@ module.exports = function(grunt) {
 
                 gatherDefaultRepositories(
                     dhrResult => {
-                        if (dhrResult.WasGathered) teamRepositories = dhrResult.Repositories;
+                        if (dhrResult.WasGathered) recordDefaults(dhrResult.RepositoryDefaults);
                         onComplete();
                     }
                 )
             }
         )
+
+        function recordDefaults(repositoryDefaults) {
+            repositoryDefaults.forEach(rd => {
+                const hubRepository = teamRepositories.find(tr => tr.hubId === rd.HubId);
+
+                if (!hubRepository) return;
+
+                hubRepository.repositories.forEach(hr => {hr.IsDefault = hr.id === rd.DefaultRepositoryId;})
+            });
+        }
 
         function gatherDefaultTeamHub(onComplete) {
             const rl = getReadline();
@@ -319,13 +329,13 @@ module.exports = function(grunt) {
 
         function gatherDefaultRepositories(onComplete) {
             const teamRepositoriesClone = [...teamRepositories];
-            const newTeamRepositories = [];
+            const teamRepositoryDefaults = [];
 
             gatherThem();
 
             function gatherThem() {
                 if (teamRepositoriesClone.length === 0) {
-                    onComplete({WasGathered: true, Repositories: newTeamRepositories});
+                    onComplete({WasGathered: true, RepositoryDefaults: teamRepositoryDefaults});
                     return;
                 }
 
@@ -341,14 +351,14 @@ module.exports = function(grunt) {
                     or 'ABORT'), the process will skip the Team Hub you're on, and move to the next.  `
                 );
 
-
+                gatherADefaultRepository();
 
                 function gatherADefaultRepository() {
                     const rl = getReadline();
-                    const currentTeamHub = teamHubsClone.pop();
+                    const currentTeamRepositories = teamRepositoriesClone.pop();
 
                     showTeamHubInfo(
-                        currentTeamHub, false, true
+                        currentTeamRepository.hubId, false, true
                     );
 
                     rl.question(
@@ -357,20 +367,32 @@ module.exports = function(grunt) {
                         answer => {
                             if (answer === 'ABORT') {
                                 rl.close();
-                                onComplete({WasGathered: false, Result: null});
+                                onComplete({WasGathered: false, RepositoryDefaults: null});
                                 return;
                             }
 
                             if (answer === 'EXIT') {
                                 rl.close();
-                                onComplete({WasGathered: true, Result: newTeamRepositories});
+                                onComplete({WasGathered: true, RepositoryDefaults: teamRepositoryDefaults});
                                 return;
                             }
 
+                            if (!valueIsTeamRepositoryId(currentTeamRepository.hubId, answer)) {
+                                rl.close();
+                                gatherADefaultRepository();
+                                return;
+                            }
                             
 
                             rl.close();
-                            newTeamRepositories.push()
+                            
+                            if (valueIsTeamRepositoryId(currentTeamRepository.hubId, answer)) {
+                                teamRepositoryDefaults.push(
+                                    {HubId: currentTeamRepository.hubId, DefaultRepositoryId: answer}
+                                );
+                            }
+
+                            gatherADefaultRepository();
                         }
                     )
                 }
