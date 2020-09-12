@@ -696,7 +696,7 @@ module.exports = function(grunt) {
                 populateFullBootstrapLocation();
                 populateFirstMinimalBootstrapLocation();
                 populateTeamSynchLocation();
-                populateProjectTemplatesStagingFolder();
+                populateProjectTemplatesStagingFolderProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable();
 
                 function populateTeamSynchLocation() {
                     log('B3) Populating TeamSynch Folder');
@@ -807,27 +807,13 @@ module.exports = function(grunt) {
                     }
                 }
 
-                function populateProjectTemplatesStagingFolder() {
+                function populateProjectTemplatesStagingFolderProjectTemplatesFolderAndTemplateHubsAndRepositoriesVariable() {
                     log('B4) Populating Project Templates Staging Folder');
                     const currentDirectory = process.cwd();
                     process.chdir(teamSynchFolderProjectTemplatesStagingLocation);
                     templateHubIdsClone = [...templateHubIds];
                     cloneRepos();
                     process.chdir(currentDirectory);
-                    writeTemplateHubsAndRepositoriesForAdminGruntFile();
-                    log('B18) Copying TemplateHubsAndRepositories.js');
-                    copyFile('TemplateHubsAndRepositories.js');
-
-                    function copyFile(fileName, targetFileName) {
-                        fs.copyFileSync(
-                            fileName,
-                            targetLocation(targetFileName || fileName)
-                        );
-                    }
-
-                    function targetLocation(fileName) {
-                        return path.join(teamSynchFolderFullBootstrapLocation, fileName);
-                    }
 
                     function cloneRepos() {
                         if (templateHubIdsClone.length === 0) {
@@ -921,12 +907,6 @@ module.exports = function(grunt) {
                     });
 
                     synchTeamSynchFolder();
-                }
-
-                function writeTemplateHubsAndRepositoriesForAdminGruntFile() {
-                    fs.writeFileSync(
-                        './TemplateHubsAndRepositories.js', `module.exports = ${inspect(templateHubs, false, null)};`
-                    );
                 }
             }
 
@@ -1048,6 +1028,28 @@ module.exports = function(grunt) {
         function finishSettingUpTeamSynch() {
             showExplanation();
             setUpWorkingDirectory();
+            setUpTemplateHubsAndRepositories();
+
+            function setUpTemplateHubsAndRepositories() {
+                log('7B) Setting up TemplateHubsAndRepositories');
+                log('7B1) Writing TemplateHubsAndRepositories');
+                fs.writeFileSync(
+                    './TemplateHubsAndRepositories.js', `module.exports = ${inspect(templateHubs, false, null)};`
+                );
+
+                log('7B2) Copying TemplateHubsAndRepositories.js');
+                log('7B2a) Copying TemplateHubsAndRepositories.js to TeamSynch FullBootstrap location');
+                fs.copyFileSync(
+                    'TemplateHubsAndRepositories.js',
+                    path.join(teamSynchFolderFullBootstrapLocation, 'TemplateHubsAndRepositories.js')
+                );
+
+                log('7B2b) Copying TemplateHubsAndRepositories.js to Working location');
+                fs.copyFileSync(
+                    'TemplateHubsAndRepositories.js',
+                    path.join(workingFolderLocation, 'TemplateHubsAndRepositories.js')
+                );
+            }
 
             function setUpWorkingDirectory() {
                 log('7A) Set up Working Directory');
