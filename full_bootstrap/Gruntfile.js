@@ -906,7 +906,19 @@ module.exports = function(grunt) {
                         }
                     });
 
+                    setUpTemplateHubsAndRepositories();
                     synchTeamSynchFolder();
+
+                    function setUpTemplateHubsAndRepositories() {
+                        fs.writeFileSync(
+                            './TemplateHubsAndRepositories.js', `module.exports = ${inspect(templateHubs, false, null)};`
+                        );
+        
+                        fs.copyFileSync(
+                            'TemplateHubsAndRepositories.js',
+                            path.join(teamSynchFolderFullBootstrapLocation, 'TemplateHubsAndRepositories.js')
+                        );
+                    }
                 }
             }
 
@@ -1028,28 +1040,11 @@ module.exports = function(grunt) {
         function finishSettingUpTeamSynch() {
             showExplanation();
             setUpWorkingDirectory();
-            setUpTemplateHubsAndRepositories();
 
-            function setUpTemplateHubsAndRepositories() {
-                log('7B) Setting up TemplateHubsAndRepositories');
-                log('7B1) Writing TemplateHubsAndRepositories');
-                fs.writeFileSync(
-                    './TemplateHubsAndRepositories.js', `module.exports = ${inspect(templateHubs, false, null)};`
-                );
-
-                log('7B2) Copying TemplateHubsAndRepositories.js');
-                log('7B2a) Copying TemplateHubsAndRepositories.js to TeamSynch FullBootstrap location');
-                fs.copyFileSync(
-                    'TemplateHubsAndRepositories.js',
-                    path.join(teamSynchFolderFullBootstrapLocation, 'TemplateHubsAndRepositories.js')
-                );
-
-                log('7B2b) Copying TemplateHubsAndRepositories.js to Working location');
-                fs.copyFileSync(
-                    'TemplateHubsAndRepositories.js',
-                    path.join(workingFolderLocation, 'TemplateHubsAndRepositories.js')
-                );
-            }
+            fs.copyFileSync(
+                'TemplateHubsAndRepositories.js',
+                path.join(workingFolderLocation, 'TemplateHubsAndRepositories.js')
+            );
 
             function setUpWorkingDirectory() {
                 log('7A) Set up Working Directory');
